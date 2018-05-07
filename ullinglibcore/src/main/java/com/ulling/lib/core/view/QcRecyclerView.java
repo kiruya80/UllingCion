@@ -54,7 +54,7 @@ import com.ulling.lib.core.viewutil.recyclerView.EndlessRecyclerScrollListener;
  * Header/Footer을 포함?
  * Fail loading ?
  */
-public class QcRecyclerView extends RecyclerView {
+public abstract class QcRecyclerView extends android.support.v7.widget.RecyclerView {
     private Context context;
     private QcRecyclerListener qcRecyclerListener;
     private QcRecyclerBaseAdapter adapter;
@@ -142,8 +142,32 @@ public class QcRecyclerView extends RecyclerView {
         if (endlessRecyclerScrollListener != null) {
             addOnScrollListener(endlessRecyclerScrollListener);
         }
+
+//        mSubscription.add(mViewModel.getSomeData()
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(this::updateView,
+//                        this::handleError));
+//        needSubscribeUiFromViewModel();
     }
 
+//    @Override
+//    public void onDetachedFromWindow() {
+////        needSubscribeUiClear();
+//        super.onDetachedFromWindow();
+//    }
+
+    /**
+     * 6.
+     *
+     * 데이터모델로부터 변화되는 데이터를 구독하고
+     * 데이터를 UI에 연결한다
+     */
+//    protected abstract void needSubscribeUiFromViewModel();
+
+    /**
+     * 7. 뷰모델 연결 중지
+     */
+//    protected abstract void needSubscribeUiClear();
 
     /**
      * emptyView SETTING

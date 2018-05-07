@@ -5,7 +5,7 @@
 
 package com.ulling.lib.core.common;
 
-abstract class QcApiURL {
+public abstract class QcApiURL {
     public static final String SVR_BASE_URL = "http://www.iullim.com/";
 
     public static final String DEFAULT_PARAMS_ENCODING = "UTF-8";

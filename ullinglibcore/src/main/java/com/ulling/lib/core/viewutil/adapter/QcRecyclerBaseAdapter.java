@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.ulling.lib.core.base.QcBaseLifeFragment;
+import com.ulling.lib.core.ui.QcBaseLifeFragment;
 import com.ulling.lib.core.entities.QcBaseItem;
 import com.ulling.lib.core.util.QcLog;
 
@@ -30,12 +30,13 @@ import java.util.List;
  */
 public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBaseViewHolder> {
     public static final int TYPE_DEFAULT = 1;
+    public static final int TYPE_ERROR = 2;
     public static final int TYPE_LOAD_FAIL = -999;
     public static final int TYPE_LOAD_PROGRESS = 999;
 
     public Context qCon;
     public QcBaseLifeFragment qFragment;
-    private AndroidViewModel viewModel;
+//    private AndroidViewModel viewModel;
     public QcRecyclerItemListener qcRecyclerItemListener;
     /**
      * data set
@@ -76,19 +77,19 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
      * 2.
      * 뷰모델 설정
      */
-    public abstract void setViewModel(AndroidViewModel viewModel);
+//    public abstract void setViewModel(AndroidViewModel viewModel);
 
-    public boolean isViewModel() {
-        if (viewModel == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public AndroidViewModel getViewModel() {
-        return viewModel;
-    }
+//    public boolean isViewModel() {
+//        if (viewModel == null) {
+//            return false;
+//        } else {
+//            return true;
+//        }
+//    }
+//
+//    public AndroidViewModel getViewModel() {
+//        return viewModel;
+//    }
 
     /**
      * 2.
@@ -445,6 +446,9 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
                 needUILoadProgressBinding(holder, position, object);
             } else if (item.getType() == TYPE_DEFAULT) {
                 QcLog.i("TYPE_DEFAULT =====" + position);
+                needUIBinding(holder, position, object);
+            } else if (item.getType() == TYPE_ERROR) {
+                QcLog.i("TYPE_ERROR =====" + position);
                 needUIBinding(holder, position, object);
             } else {
                 QcLog.i("TYPE_OTHER =====" + position);

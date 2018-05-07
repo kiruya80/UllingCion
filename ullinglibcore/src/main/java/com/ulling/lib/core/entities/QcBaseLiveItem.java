@@ -8,7 +8,7 @@ import com.ulling.lib.core.viewutil.adapter.QcRecyclerBaseAdapter;
 /**
  * Created by P100651 on 2017-07-27.
  */
-public  class QcBaseLiveItem extends LiveData<QcBaseItem> {
+public class QcBaseLiveItem extends LiveData<QcBaseItem> {
     @Ignore
     public int type = QcRecyclerBaseAdapter.TYPE_DEFAULT;
 

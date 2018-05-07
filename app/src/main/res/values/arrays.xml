@@ -4,7 +4,6 @@
     <string-array name="array_coin_symbol">
         <item>@string/coin_symbol_xvg</item>
         <item>@string/coin_symbol_doge</item>
-        <item>@string/coin_symbol_dcr</item>
         <item>@string/coin_symbol_zrx</item>
         <item>@string/coin_symbol_aion</item>
         <item>@string/coin_symbol_lrc</item>
@@ -38,7 +37,6 @@
         <item>@string/coin_symbol_ubq</item>
         <item>@string/coin_symbol_vee</item>
         <item>@string/coin_symbol_nav</item>
-        <item>@string/coin_symbol_ignis</item>
         <item>@string/coin_symbol_cloak</item>
         <item>@string/coin_symbol_bay</item>
         <item>@string/coin_symbol_rcn</item>

@@ -5,6 +5,7 @@ import android.content.Context;
 import com.ulling.lib.core.base.QcBaseApplication;
 import com.ulling.lib.core.util.QcPreferences;
 import com.ulling.lib.core.util.QcToast;
+import com.ulling.ullingcion.db.UpbitRoomDatabase;
 
 /**
  * Created by KILHO on 2016. 7. 4..
@@ -49,4 +50,9 @@ public class QUllingApplication extends QcBaseApplication {
 //        }
 //        return appQcPreferences;
 //    }
+
+    public UpbitRoomDatabase getDatabase() {
+        return UpbitRoomDatabase.getInstance(this, mAppExecutors);
+    }
+
 }

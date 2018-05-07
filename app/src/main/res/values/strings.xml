@@ -6,7 +6,6 @@
 
     <string name="coin_symbol_xvg">XVG</string>
     <string name="coin_symbol_doge">DOGE</string>
-    <string name="coin_symbol_dcr">DCR</string>
     <string name="coin_symbol_zrx">ZRX</string>
     <string name="coin_symbol_aion">AION</string>
     <string name="coin_symbol_lrc">LRC</string>
@@ -40,7 +39,6 @@
     <string name="coin_symbol_ubq">UBQ</string>
     <string name="coin_symbol_vee">VEE</string>
     <string name="coin_symbol_nav">NAV</string>
-    <string name="coin_symbol_ignis">IGNIS</string>
     <string name="coin_symbol_cloak">CLOAK</string>
     <string name="coin_symbol_bay">BAY</string>
     <string name="coin_symbol_rcn">RCN</string>

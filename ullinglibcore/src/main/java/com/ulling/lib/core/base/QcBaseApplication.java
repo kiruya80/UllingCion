@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.res.Configuration;
 
 import com.ulling.lib.core.util.QcLog;
+import com.ulling.lib.core.util.QcPreferences;
+import com.ulling.lib.core.util.QcToast;
 
 /**
  *
@@ -42,6 +44,11 @@ public class QcBaseApplication extends Application {
     //    public String TAG = getClass().getSimpleName();
     private static QcBaseApplication SINGLE_U;
     public static String APP_NAME = "";
+    public AppExecutors mAppExecutors;
+
+    public static synchronized QcBaseApplication getInstance() {
+        return SINGLE_U;
+    }
 
     /**
      * 애플리케이션이 생성될 때 호출된다. 모든 상태변수와 리소스 초기화한다
@@ -66,12 +73,9 @@ public class QcBaseApplication extends Application {
     private void init() {
         QcLog.i("QbaseApplication init !");
         SINGLE_U = this;
-//        qcPreferences = QcPreferences.getInstance(qCon);
-//        QcToast.init(this);
-    }
-
-    public static synchronized QcBaseApplication getInstance() {
-        return SINGLE_U;
+        QcPreferences.getInstance();
+        QcToast.getInstance();
+        mAppExecutors = new AppExecutors();
     }
 
     /**
