@@ -67,11 +67,13 @@ public class UpbitKrwAdapter extends QcRecyclerBaseAdapter<UpbitPriceResponse> {
         if (item.getType() == TYPE_DEFAULT) {
             RowUpbitKrwBinding hoderBinding = (RowUpbitKrwBinding) holder.getBinding();
 
-            hoderBinding.tvPosition.setTag("" + item.getCode());
+            hoderBinding.tvPosition.setText("" + item.getCode());
 
-            long t = Long.parseLong(item.getTimestamp());
-            SimpleDateFormat simpleDate = new SimpleDateFormat("MM-dd hh:mm:ss", Locale.KOREA);
-            hoderBinding.tvTime.setText("Time : " + simpleDate.format(t));
+            if (item.getTimestamp() > 0) {
+//                long t = Long.parseLong(item.getTimestamp());
+                SimpleDateFormat simpleDate = new SimpleDateFormat("MM-dd hh:mm:ss", Locale.KOREA);
+                hoderBinding.tvTime.setText("Time : " + simpleDate.format(item.getTimestamp()));
+            }
 
             hoderBinding.tvPrice.setText("HighPrice : " + item.getHighPrice());
 

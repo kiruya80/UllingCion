@@ -57,9 +57,9 @@ public class UpbitKrwModel {
         return upbitPriceList;
     }
 
-    public void loadKrwList(final String code, String count, String to) {
-        QcLog.e("code " + code + " , time " + to);
-        Call<List<UpbitPriceResponse>> call = RetrofitUpbitService.getInstance().getKrwCoinAnswers(code, count, to);
+    public void loadKrwList(final String coinSymbol, String count, String to) {
+        QcLog.e("coinSymbol " + coinSymbol + " , time " + to);
+        Call<List<UpbitPriceResponse>> call = RetrofitUpbitService.getInstance().getKrwCoinAnswers("CRIX.UPBIT.KRW-" + coinSymbol, count, to);
         call.enqueue(new Callback<List<UpbitPriceResponse>>() {
             @Override
             public void onResponse(Call<List<UpbitPriceResponse>> call, Response<List<UpbitPriceResponse>> response) {
@@ -67,8 +67,23 @@ public class UpbitKrwModel {
                 int statusCode = response.code();
                 QcLog.e("onResponse statusCode !!! " + statusCode);
                 if (response.isSuccessful()) {
-                    QcLog.e("onResponse isSuccessful == ");
-                    upbitPriceList.postValue(response.body());
+                    QcLog.e("onResponse isSuccessful == " + response.body());
+                    List<UpbitPriceResponse> result = response.body();
+                    if (result != null && result.size() == 0) {
+                        // 원화 상장 예정 []
+                        UpbitPriceResponse mUpbitPriceResponse = new UpbitPriceResponse();
+                        mUpbitPriceResponse.setType(QcRecyclerBaseAdapter.TYPE_DEFAULT);
+                        mUpbitPriceResponse.setCode(coinSymbol);
+                        mUpbitPriceResponse.setTimestamp(System.currentTimeMillis());
+                        mUpbitPriceResponse.setHighPrice(coinSymbol);
+                        mUpbitPriceResponse.setLowPrice("원화상장 예정");
+
+                        result.add(mUpbitPriceResponse);
+
+                        upbitPriceList.postValue(result);
+                    }
+//                    upbitPriceList.postValue(response.body());
+
                 } else {
                     try {
 //                    {"status":404,"error":"Not Found","message":"Not Found","timeStamp":"Sun Apr 29 03:02:57 KST 2018","trace":null}
@@ -78,15 +93,15 @@ public class UpbitKrwModel {
 
                         UpbitPriceResponse mUpbitPriceResponse = new UpbitPriceResponse();
                         mUpbitPriceResponse.setType(QcRecyclerBaseAdapter.TYPE_ERROR);
-                        mUpbitPriceResponse.setCode(code);
+                        mUpbitPriceResponse.setCode(coinSymbol);
                         mUpbitPriceResponse.setErrorResponse(mError);
 
                         List<UpbitPriceResponse> list = upbitPriceList.getValue();
                         if (list == null)
-                         list = new ArrayList<>();
+                            list = new ArrayList<>();
                         list.add(mUpbitPriceResponse);
 
-                        upbitPriceList.postValue(list);
+//                        upbitPriceList.postValue(list);
                         QcLog.e("UpbitErrorResponse ==== " + mError.toString());
                     } catch (IOException e) {
                         e.printStackTrace();

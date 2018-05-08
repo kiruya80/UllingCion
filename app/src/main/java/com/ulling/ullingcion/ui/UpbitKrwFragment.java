@@ -90,10 +90,14 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
         mUpbitKrwViewModel.getKrwList().observe(this, new Observer<List<UpbitPriceResponse>>() {
             @Override
             public void onChanged(@Nullable List<UpbitPriceResponse> upbitPriceResponses) {
-                QcLog.e("observe === ");
-                if (adapter != null) {
-                    adapter.addListDiffResult(mUpbitKrwViewModel.getKrwList().getValue());
-                    adapter.notifyDataSetChanged();
+                QcLog.e("observe === " + upbitPriceResponses.toString());
+                if (upbitPriceResponses != null && upbitPriceResponses.size() == 0) {
+                    // 원화 상장 예정
+                    QcLog.e("result 22== " + upbitPriceResponses);
+                    if (adapter != null) {
+                        adapter.addListDiffResult(mUpbitKrwViewModel.getKrwList().getValue());
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             }
         });
@@ -102,19 +106,22 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
     }
 
     private void update() {
+        if (mUpbitKrwViewModel != null) {
+            // 원화상자예정
+//        https://crix-api-cdn.upbit.com/v1/crix/candles/minutes/1?code=CRIX.UPBIT.KRW-GTO&count=2&to=2018-04-20%2011:42:00
+//            mUpbitKrwViewModel.loadKrwList("GTO", "1", "2018-04-07 11:42:00");
 
-        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
-        String getTime = simpleDate.format(System.currentTimeMillis());
+            SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+            String getTime = simpleDate.format(System.currentTimeMillis());
 
-        coinSymbol = getResources().getStringArray(R.array.array_coin_symbol);
-
-        if (coinSymbol != null)
-            for (int i = 0; i < coinSymbol.length; i++) {
-                mUpbitKrwViewModel.loadKrwList("CRIX.UPBIT.KRW-" + coinSymbol[i], "1", getTime);
-            }
+            coinSymbol = getResources().getStringArray(R.array.array_coin_symbol);
+            if (coinSymbol != null)
+                for (int i = 0; i < coinSymbol.length; i++) {
+                    mUpbitKrwViewModel.loadKrwList(coinSymbol[i], "1", getTime);
+                }
 
 //        mUpbitKrwViewModel.loadKrwList("CRIX.UPBIT.KRW-EOS", "2", getTime);
-//        mUpbitKrwViewModel.loadKrwList("CRIX.UPBIT.KRW-XVG", "2", getTime);
+        }
     }
 
     @Override

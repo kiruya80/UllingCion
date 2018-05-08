@@ -33,8 +33,8 @@ public class UpbitKrwViewModel extends QcBaseViewModel{
     }
 
     // code=CRIX.UPBIT.KRW-XVG&count=2&to=2018-05-04%2017:30:00
-    public void loadKrwList(String code, String count, String to) {
+    public void loadKrwList(String coinSymbol, String count, String to) {
         if (upbitKrwModel != null)
-        upbitKrwModel.loadKrwList(code, count, to);
+        upbitKrwModel.loadKrwList(coinSymbol, count, to);
     }
 }

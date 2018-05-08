@@ -37,7 +37,7 @@ public class UpbitPriceResponse extends QcBaseItem {
 
     @SerializedName("timestamp")
     @Expose
-    private String timestamp;
+    private long timestamp = 0;
 
     @SerializedName("candleAccTradePrice")
     @Expose
@@ -133,11 +133,11 @@ public class UpbitPriceResponse extends QcBaseItem {
         this.lowPrice = lowPrice;
     }
 
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
