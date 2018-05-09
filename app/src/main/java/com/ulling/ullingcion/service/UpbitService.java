@@ -47,7 +47,8 @@ public class UpbitService extends LifecycleService {
             QcLog.e("handleMessage == " + msg.arg1);
             if (startService) {
                 try {
-                    Thread.sleep(30000);
+                    // 10분 마다
+                    Thread.sleep(10 * 60 * 1000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -104,6 +105,7 @@ public class UpbitService extends LifecycleService {
 
     private void update() {
         if (mUpbitKrwViewModel != null) {
+            QcLog.e("update ==");
             // 원화상자예정
 //        https://crix-api-cdn.upbit.com/v1/crix/candles/minutes/1?code=CRIX.UPBIT.KRW-GTO&count=2&to=2018-04-20%2011:42:00
 //            mUpbitKrwViewModel.loadKrwList("GTO", "1", "2018-04-07 11:42:00");
