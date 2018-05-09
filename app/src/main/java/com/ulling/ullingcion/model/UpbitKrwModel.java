@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 
 import com.ulling.lib.core.util.QcLog;
 import com.ulling.lib.core.viewutil.adapter.QcRecyclerBaseAdapter;
+import com.ulling.ullingcion.common.ApiUrl;
 import com.ulling.ullingcion.entites.Status;
 import com.ulling.ullingcion.entites.UpbitErrorResponse;
 import com.ulling.ullingcion.entites.UpbitPriceResponse;
@@ -63,17 +64,15 @@ public class UpbitKrwModel {
         call.enqueue(new Callback<List<UpbitPriceResponse>>() {
             @Override
             public void onResponse(Call<List<UpbitPriceResponse>> call, Response<List<UpbitPriceResponse>> response) {
-                QcLog.e("message == " + response.message().toString());
-                int statusCode = response.code();
-                QcLog.e("onResponse statusCode !!! " + statusCode);
+                QcLog.e("message == " + response.code() + " , " + response.message().toString());
                 if (response.isSuccessful()) {
-                    QcLog.e("onResponse isSuccessful == " + response.body());
+//                    QcLog.e("onResponse isSuccessful == " + response.body());
                     List<UpbitPriceResponse> result = response.body();
                     if (result != null && result.size() == 0) {
                         // 원화 상장 예정 []
                         UpbitPriceResponse mUpbitPriceResponse = new UpbitPriceResponse();
-                        mUpbitPriceResponse.setType(QcRecyclerBaseAdapter.TYPE_DEFAULT);
                         mUpbitPriceResponse.setCode(coinSymbol);
+                        mUpbitPriceResponse.setLogoImgUrl(ApiUrl.BASE_COIN_LOGO_URL + coinSymbol + ".png");
                         mUpbitPriceResponse.setTimestamp(System.currentTimeMillis());
                         mUpbitPriceResponse.setHighPrice(coinSymbol);
                         mUpbitPriceResponse.setLowPrice("원화상장 예정");
@@ -82,7 +81,6 @@ public class UpbitKrwModel {
 
                         upbitPriceList.postValue(result);
                     }
-//                    upbitPriceList.postValue(response.body());
 
                 } else {
                     try {
@@ -90,19 +88,21 @@ public class UpbitKrwModel {
                         UpbitErrorResponse mError = (UpbitErrorResponse) RetrofitUpbitService.retrofit.responseBodyConverter(
                                 UpbitErrorResponse.class, UpbitErrorResponse.class.getAnnotations())
                                 .convert(response.errorBody());
+//                        QcLog.e("UpbitErrorResponse ==== " + mError.toString());
 
-                        UpbitPriceResponse mUpbitPriceResponse = new UpbitPriceResponse();
-                        mUpbitPriceResponse.setType(QcRecyclerBaseAdapter.TYPE_ERROR);
-                        mUpbitPriceResponse.setCode(coinSymbol);
-                        mUpbitPriceResponse.setErrorResponse(mError);
-
-                        List<UpbitPriceResponse> list = upbitPriceList.getValue();
-                        if (list == null)
-                            list = new ArrayList<>();
-                        list.add(mUpbitPriceResponse);
-
+                        // 테스트용
+//                        UpbitPriceResponse mUpbitPriceResponse = new UpbitPriceResponse();
+//                        mUpbitPriceResponse.setType(UpbitKrwAdapter.TYPE_ERROR);
+//                        mUpbitPriceResponse.setCode(coinSymbol);
+//                        mUpbitPriceResponse.setLogoImgUrl(ApiUrl.BASE_COIN_LOGO_URL + coinSymbol + ".png");
+//                        mUpbitPriceResponse.setErrorResponse(mError);
+//
+//                        List<UpbitPriceResponse> list = upbitPriceList.getValue();
+//                        if (list == null)
+//                            list = new ArrayList<>();
+//                        list.add(mUpbitPriceResponse);
+//
 //                        upbitPriceList.postValue(list);
-                        QcLog.e("UpbitErrorResponse ==== " + mError.toString());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -111,8 +111,7 @@ public class UpbitKrwModel {
 
             @Override
             public void onFailure(Call<List<UpbitPriceResponse>> call, Throwable t) {
-                QcLog.e("onFailure error loading from API == " + t.toString());
-                QcLog.e("onFailure error loading from API == " + t.getMessage());
+                QcLog.e("onFailure error loading from API == " + t.toString() + " , " + t.getMessage());
 
             }
         });

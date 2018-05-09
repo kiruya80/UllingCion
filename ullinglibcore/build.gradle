@@ -76,7 +76,6 @@ dependencies {
      * JodaTime
      */
     implementation 'joda-time:joda-time:2.9.9'
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0' 
 }
 repositories {
     mavenCentral()

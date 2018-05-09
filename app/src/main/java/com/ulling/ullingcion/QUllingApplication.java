@@ -1,8 +1,14 @@
 package com.ulling.ullingcion;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 
+import android.arch.lifecycle.MutableLiveData;
+
 import com.ulling.lib.core.base.QcBaseApplication;
+import com.ulling.lib.core.util.QcLog;
 import com.ulling.lib.core.util.QcPreferences;
 import com.ulling.lib.core.util.QcToast;
 import com.ulling.ullingcion.db.UpbitRoomDatabase;
@@ -13,6 +19,7 @@ import com.ulling.ullingcion.db.UpbitRoomDatabase;
 public class QUllingApplication extends QcBaseApplication {
     private static QUllingApplication SINGLE_U;
     public static Context qCon;
+    private MutableLiveData<Boolean> isUpbitService = null;
 //    public static QcPreferences appQcPreferences;
 
     @Override
@@ -36,9 +43,9 @@ public class QUllingApplication extends QcBaseApplication {
         SINGLE_U = this;
         qCon = getApplicationContext();
         APP_NAME = qCon.getResources().getString(R.string.app_name);
-//        MyVolley.init(this);
         QcPreferences.getInstance().getAPP_NAME();
         QcToast.getInstance().show("Start App : " + QcPreferences.getInstance().getAPP_NAME(), false);
+        initIsUpbitService();
     }
 
     public static synchronized QUllingApplication getInstance() {
@@ -55,4 +62,34 @@ public class QUllingApplication extends QcBaseApplication {
         return UpbitRoomDatabase.getInstance(this, mAppExecutors);
     }
 
+    public boolean isServiceRunningCheck() {
+        ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("UpbitService".equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public MutableLiveData<Boolean> initIsUpbitService() {
+        if (isUpbitService == null) {
+            isUpbitService = new MutableLiveData<Boolean>();
+        }
+        isUpbitService.postValue(isServiceRunningCheck());
+        QcLog.e("isServiceRunningCheck() == " + isServiceRunningCheck());
+        return isUpbitService;
+    }
+    public MutableLiveData<Boolean> getIsUpbitService() {
+        if (isUpbitService == null) {
+            isUpbitService = new MutableLiveData<Boolean>();
+//            isUpbitService.postValue(false);
+            initIsUpbitService();
+        }
+        return isUpbitService;
+    }
+
+    public void setIsUpbitService(MutableLiveData<Boolean> isUpbitService) {
+        this.isUpbitService = isUpbitService;
+    }
 }

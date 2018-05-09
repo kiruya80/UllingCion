@@ -44,7 +44,7 @@ public class QcBaseRetrofitService {
     }
 
     protected static OkHttpClient.Builder enableTlsOnPreLollipop(OkHttpClient.Builder builder) {
-        if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
+        if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 22) {
             try {
                 SSLContext sc = SSLContext.getInstance("TLSv1.2");
                 sc.init(null, null, null);

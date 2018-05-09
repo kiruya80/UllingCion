@@ -173,79 +173,103 @@ public abstract class QcRecyclerView extends android.support.v7.widget.RecyclerV
      * emptyView SETTING
      */
     private View emptyView;
-    private AdapterDataObserver emptyObserver = new AdapterDataObserver() {
+
+    public void setEmptyView(View view) {
+        this.emptyView = view;
+        initEmptyView();
+    }
+
+    private void initEmptyView() {
+        if (emptyView == null)
+            return;
+
+        emptyView.setVisibility(
+                getAdapter() == null || getAdapter().getItemCount() == 0 ? VISIBLE : GONE);
+        QcRecyclerView.this.setVisibility(
+                getAdapter() == null || getAdapter().getItemCount() == 0 ? GONE : VISIBLE);
+    }
+
+    final AdapterDataObserver adapterDataObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
+            QcLog.e("adapterDataObserver onChanged =====");
             Adapter<?> adapter = getAdapter();
             if (adapter != null && emptyView != null) {
                 QcLog.e("adapter != null && emptyView != null =====" + adapter.getItemCount());
-                if (adapter.getItemCount() == 0) {
-                    setEmptyView(true);
-                } else {
-                    setEmptyView(false);
-                }
+                initEmptyView();
             }
         }
 
         @Override
         public void onItemRangeChanged(int positionStart, int itemCount) {
-            QcLog.e("onItemRangeChanged =====");
+            QcLog.e("adapterDataObserver onItemRangeChanged =====");
             super.onItemRangeChanged(positionStart, itemCount);
+            initEmptyView();
         }
 
         @Override
         public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
-
-            QcLog.e("onItemRangeChanged payload =====");
+            QcLog.e("adapterDataObserver onItemRangeChanged payload =====");
             super.onItemRangeChanged(positionStart, itemCount, payload);
+            initEmptyView();
         }
 
         @Override
         public void onItemRangeInserted(int positionStart, int itemCount) {
-            QcLog.e("onItemRangeInserted =====");
+            QcLog.e("adapterDataObserver onItemRangeInserted =====");
             super.onItemRangeInserted(positionStart, itemCount);
+            initEmptyView();
         }
 
         @Override
         public void onItemRangeRemoved(int positionStart, int itemCount) {
+            QcLog.e("adapterDataObserver onItemRangeRemoved =====");
             super.onItemRangeRemoved(positionStart, itemCount);
+            initEmptyView();
         }
 
         @Override
         public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+            QcLog.e("adapterDataObserver onItemRangeMoved =====");
             super.onItemRangeMoved(fromPosition, toPosition, itemCount);
+            initEmptyView();
         }
     };
+
+    public void setAdapter(QcRecyclerBaseAdapter adapter, View emptyView) {
+//        if (!(adapter instanceof QcRecyclerBaseAdapter)) {
+//            throw new IllegalArgumentException("please use QcRecyclerBaseAdapter to instead of Adapter");
+//        }
+//        this.setEmptyView(emptyView);
+//        this.setAdapter(adapter);
+        this.setAdapter(adapter, 0, emptyView);
+    }
 
     public void setAdapter(QcRecyclerBaseAdapter adapter, int pageSize, View emptyView) {
         if (!(adapter instanceof QcRecyclerBaseAdapter)) {
             throw new IllegalArgumentException("please use QcRecyclerBaseAdapter to instead of Adapter");
         }
-        this.pageSize = pageSize;
-        if (endlessRecyclerScrollListener != null)
-            endlessRecyclerScrollListener.setPgeSize(pageSize);
-        this.emptyView = emptyView;
-        this.adapter = adapter;
+        if (pageSize > 0) {
+            this.pageSize = pageSize;
+            if (endlessRecyclerScrollListener != null)
+                endlessRecyclerScrollListener.setPgeSize(pageSize);
+        }
+//        this.emptyView = emptyView;
+//        this.adapter = adapter;
+
+        this.setEmptyView(emptyView);
         this.setAdapter(adapter);
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
+        Adapter oldAdapter = getAdapter();
         super.setAdapter(adapter);
-        if (adapter != null && emptyObserver != null && emptyView != null) {
-            if (!adapter.hasObservers())
-                adapter.registerAdapterDataObserver(emptyObserver);
-//            emptyObserver.onChanged();
+        if (oldAdapter != null) {
+            oldAdapter.unregisterAdapterDataObserver(adapterDataObserver);
         }
-    }
-
-    private void setEmptyView(boolean isEmpty) {
-        if (isEmpty) {
-            emptyView.setVisibility(View.VISIBLE);
-            QcRecyclerView.this.setVisibility(View.GONE);
-        } else {
-            emptyView.setVisibility(View.GONE);
-            QcRecyclerView.this.setVisibility(View.VISIBLE);
+        if (adapter != null) {
+            adapter.registerAdapterDataObserver(adapterDataObserver);
         }
     }
 

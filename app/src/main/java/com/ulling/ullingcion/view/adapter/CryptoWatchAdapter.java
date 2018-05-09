@@ -51,10 +51,6 @@ public class CryptoWatchAdapter extends QcRecyclerBaseAdapter<CryptoWatch> {
         return R.layout.row_cryptowatch;
     }
 
-    @Override
-    protected void needUIEventListener(int viewTypeResId, ViewDataBinding binding) {
-
-    }
 
     @Override
     protected void needUIBinding(QcBaseViewHolder holder, int position, Object object) {
@@ -78,6 +74,11 @@ public class CryptoWatchAdapter extends QcRecyclerBaseAdapter<CryptoWatch> {
     }
 
     @Override
+    protected void needUIHeaderBinding(QcBaseViewHolder holder, int position, Object object) {
+
+    }
+
+    @Override
     protected void needUILoadFailBinding(QcBaseViewHolder holder, int position, Object object) {
 
     }
@@ -89,6 +90,11 @@ public class CryptoWatchAdapter extends QcRecyclerBaseAdapter<CryptoWatch> {
 
     @Override
     protected void needUIOtherBinding(QcBaseViewHolder holder, int position, Object object) {
+
+    }
+
+    @Override
+    protected void needUIEventListener(int viewTypeResId, ViewDataBinding binding) {
 
     }
 }

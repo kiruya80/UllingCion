@@ -25,6 +25,8 @@ public class ApiUrl extends QcApiURL {
 //    https://api.cryptowat.ch/markets/bitfinex/btcusd/ohlc?periods=86400&after=1522422000
         public static final String BASE_CRYPTOWATCH_URL = "https://api.cryptowat.ch/";
 
+//    https://static.upbit.com/logos/ETH.png
+    public static final String BASE_COIN_LOGO_URL = "https://static.upbit.com/logos/";
 
 
 

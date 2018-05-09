@@ -71,6 +71,7 @@ public class UpbitPriceResponse extends QcBaseItem {
     @Expose
     private String signedChangeRate;
 
+    private String logoImgUrl = "";
     private UpbitErrorResponse errorResponse;
 
     public UpbitPriceResponse() {
@@ -213,6 +214,14 @@ public class UpbitPriceResponse extends QcBaseItem {
         this.errorResponse = errorResponse;
     }
 
+    public String getLogoImgUrl() {
+        return logoImgUrl;
+    }
+
+    public void setLogoImgUrl(String logoImgUrl) {
+        this.logoImgUrl = logoImgUrl;
+    }
+
     @Override
     public String toString() {
         return "UpbitPriceResponse{" +
@@ -223,7 +232,7 @@ public class UpbitPriceResponse extends QcBaseItem {
                 ", code='" + code + '\'' +
                 ", openingPrice='" + openingPrice + '\'' +
                 ", lowPrice='" + lowPrice + '\'' +
-                ", timestamp='" + timestamp + '\'' +
+                ", timestamp=" + timestamp +
                 ", candleAccTradePrice='" + candleAccTradePrice + '\'' +
                 ", signedChangePrice='" + signedChangePrice + '\'' +
                 ", tradePrice='" + tradePrice + '\'' +
@@ -232,6 +241,8 @@ public class UpbitPriceResponse extends QcBaseItem {
                 ", highPrice='" + highPrice + '\'' +
                 ", candleAccTradeVolume='" + candleAccTradeVolume + '\'' +
                 ", signedChangeRate='" + signedChangeRate + '\'' +
+                ", logoImgUrl='" + logoImgUrl + '\'' +
+                ", errorResponse=" + errorResponse +
                 '}';
     }
 }

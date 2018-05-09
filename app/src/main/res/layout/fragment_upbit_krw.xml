@@ -26,49 +26,76 @@
                 android:layout_height="wrap_content"
                 android:text="Get Data" />
 
+            <Button
+                android:id="@+id/btnStartService"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start" />
+
         </LinearLayout>
 
-
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.ulling.ullingcion.view.CoinRecyclerview
-                android:id="@+id/qcRecyclerView"
+            <RelativeLayout
+                android:id="@+id/rlRecyclerLay"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tvEmpty"
+                <com.ulling.ullingcion.view.CoinRecyclerview
+                    android:id="@+id/qcRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+                <TextView
+                    android:id="@+id/tvEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:text="데이터가 없습니다."
+                    android:textSize="20sp"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlErrorLay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"
-                android:gravity="center"
-                android:text="데이터가 없습니다."
-                android:textSize="20sp"
-                android:visibility="gone" />
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tvNetworkError"
+                <TextView
+                    android:id="@+id/tvNetworkError"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:text="네트워크 오류입니다.\n잠시후 다시 시도하세요."
+                    android:textColor="@color/colorAccent"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlLoadingLay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"
-                android:gravity="center"
-                android:text="네트워크 오류입니다.\n잠시후 다시 시도하세요."
-                android:textColor="@color/colorAccent"
-                android:textSize="20sp"
-                android:visibility="gone" />
+                android:visibility="gone">
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:clickable="true"
-                android:visibility="gone" />
-        </RelativeLayout>
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true" />
+            </RelativeLayout>
+        </FrameLayout>
+
 
     </LinearLayout>
 </layout>

@@ -29,8 +29,8 @@ import java.util.List;
  * 1. 공통으로 사용할 수 있는 데이터 리스트? 2. 데이터 모델이 필요할까
  */
 public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBaseViewHolder> {
-    public static final int TYPE_DEFAULT = 1;
-    public static final int TYPE_ERROR = 2;
+    public static final int TYPE_HEADER = 1;
+    public static final int TYPE_DEFAULT = 2;
     public static final int TYPE_LOAD_FAIL = -999;
     public static final int TYPE_LOAD_PROGRESS = 999;
 
@@ -107,20 +107,28 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
 //    protected abstract void needAddData(LiveData<List<Class>> data);
 
     /**
-     * 5.
-     * <p>
-     * 접근한 View에 이벤트에 따른 동작 설정
-     * 버튼 및 기타 UI이벤트 설정
-     */
-    protected abstract void needUIEventListener(int viewTypeResId, ViewDataBinding binding);
-
-    /**
      * 4.
      * <p>
      * UI에서 필요한 데이터 바인딩
      * View객체에 접근하여 데이터 연결한다.
      */
     protected abstract void needUIBinding(QcBaseViewHolder holder, int position, Object object);
+
+    protected abstract void needUIHeaderBinding(QcBaseViewHolder holder, int position, Object object);
+
+    protected abstract void needUILoadFailBinding(QcBaseViewHolder holder, int position, Object object);
+
+    protected abstract void needUILoadProgressBinding(QcBaseViewHolder holder, int position, Object object);
+
+    protected abstract void needUIOtherBinding(QcBaseViewHolder holder, int position, Object object);
+
+    /**
+     * 5.
+     * <p>
+     * 접근한 View에 이벤트에 따른 동작 설정
+     * 버튼 및 기타 UI이벤트 설정
+     */
+    protected abstract void needUIEventListener(int viewTypeResId, ViewDataBinding binding);
 
 
     /**
@@ -444,11 +452,11 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
             } else if (item.getType() == TYPE_LOAD_PROGRESS) {
                 QcLog.i("TYPE_LOAD_PROGRESS =====" + position);
                 needUILoadProgressBinding(holder, position, object);
+            } else if (item.getType() == TYPE_HEADER) {
+                QcLog.i("TYPE_HEADER =====" + position);
+                needUIHeaderBinding(holder, position, object);
             } else if (item.getType() == TYPE_DEFAULT) {
                 QcLog.i("TYPE_DEFAULT =====" + position);
-                needUIBinding(holder, position, object);
-            } else if (item.getType() == TYPE_ERROR) {
-                QcLog.i("TYPE_ERROR =====" + position);
                 needUIBinding(holder, position, object);
             } else {
                 QcLog.i("TYPE_OTHER =====" + position);
@@ -456,13 +464,6 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
             }
         }
     }
-
-    protected abstract void needUILoadFailBinding(QcBaseViewHolder holder, int position, Object object);
-
-    protected abstract void needUILoadProgressBinding(QcBaseViewHolder holder, int position, Object object);
-
-    protected abstract void needUIOtherBinding(QcBaseViewHolder holder, int position, Object object);
-
     /**
      * @param position
      * @return

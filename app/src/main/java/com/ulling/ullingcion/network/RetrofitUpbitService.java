@@ -1,9 +1,9 @@
 package com.ulling.ullingcion.network;
 
+import com.ulling.lib.core.common.QcDefine;
 import com.ulling.lib.core.network.QcBaseRetrofitService;
 import com.ulling.lib.core.util.QcLog;
 import com.ulling.ullingcion.common.ApiUrl;
-import com.ulling.ullingcion.common.QcDefine;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
