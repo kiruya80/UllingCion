@@ -10,28 +10,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
-                android:layout_width="0px"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:id="@+id/tvServiceStatus"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/p200"
                 android:gravity="center"
-                android:text="Get upbit krw"
+                android:text="Service Status"
                 android:textSize="20sp" />
 
-            <Button
-                android:id="@+id/btnGet"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Get Data" />
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnStartService"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start" />
+                <Button
+                    android:id="@+id/btnServiceStart"
+                    android:layout_width="0px"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="START" />
 
+                <Button
+                    android:id="@+id/btnServiceStop"
+                    android:layout_width="0px"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="STOP" />
+                <Button
+                    android:id="@+id/btnSort"
+                    android:layout_width="0px"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="정렬" />
+            </LinearLayout>
         </LinearLayout>
 
         <FrameLayout

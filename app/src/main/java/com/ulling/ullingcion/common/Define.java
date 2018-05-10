@@ -22,5 +22,6 @@ public class Define extends QcDefine {
      */
     public static final int INTRO_TIMEOUT = 1500;
 
+    public static final String PRE_UPBIT_KRW_LIST = "PRE_UPBIT_KRW_LIST";
 
 }

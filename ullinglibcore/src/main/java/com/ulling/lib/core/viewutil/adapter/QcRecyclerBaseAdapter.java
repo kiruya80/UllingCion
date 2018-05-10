@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.ulling.lib.core.ui.QcBaseLifeFragment;
 import com.ulling.lib.core.entities.QcBaseItem;
+import com.ulling.lib.core.util.QcDiffCallback;
 import com.ulling.lib.core.util.QcLog;
 
 import java.util.ArrayList;
@@ -213,49 +214,55 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
         notifyDataSetChanged();
     }
 
-    public void addListDiffResult(final List<T> itemList_) {
+    public void addListDiffResult(final List<T> mNewItemList) {
         if (itemList == null) {
-            this.itemList = itemList_;
+//            this.itemList = mNewItemList;
+            this.itemList = new ArrayList<T>();
+            this.itemList.clear();
+            this.itemList.addAll(mNewItemList);
             notifyItemRangeInserted(0, itemList.size());
         } else {
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
-                @Override
-                public int getOldListSize() {
-                    return itemList.size();
-                }
+//            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+//                @Override
+//                public int getOldListSize() {
+//                    return itemList.size();
+//                }
+//
+//                @Override
+//                public int getNewListSize() {
+//                    return itemList_.size();
+//                }
+//
+//                @Override
+//                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+////                    return itemList.get(oldItemPosition).getAnswerId() ==
+////                            itemList_.get(newItemPosition).getAnswerId();
+//                    return itemList.get(oldItemPosition).equals(
+//                            itemList_.get(newItemPosition));
+//                }
+//
+//                @Override
+//                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+//                    T newItem = itemList_.get(newItemPosition);
+//                    T oldItem = itemList.get(oldItemPosition);
+//
+//                    return oldItem.equals(newItem);
+//                }
+//
+//
+//                @Nullable
+//                @Override
+//                public Object getChangePayload(int oldItemPosition, int newItemPosition) {
+//                    return super.getChangePayload(oldItemPosition, newItemPosition);
+//                }
+//            });
 
-                @Override
-                public int getNewListSize() {
-                    return itemList_.size();
-                }
 
-                @Override
-                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-//                    return itemList.get(oldItemPosition).getAnswerId() ==
-//                            itemList_.get(newItemPosition).getAnswerId();
-                    return itemList.get(oldItemPosition).equals(
-                            itemList_.get(newItemPosition));
-                }
-
-                @Override
-                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                    T newItem = itemList_.get(newItemPosition);
-                    T oldItem = itemList.get(oldItemPosition);
-
-                    return oldItem.equals(newItem);
-                }
-
-
-                @Nullable
-                @Override
-                public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-                    // Implement method if you're going to use ItemAnimator
-                    return super.getChangePayload(oldItemPosition, newItemPosition);
-                }
-            });
+            final QcDiffCallback diffCallback = new QcDiffCallback(this.itemList, mNewItemList);
+            final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
 
             this.itemList.clear();
-            this.itemList.addAll(itemList_);
+            this.itemList.addAll(mNewItemList);
             diffResult.dispatchUpdatesTo(this);
         }
     }

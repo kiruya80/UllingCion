@@ -9,6 +9,9 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.LongSerializationPolicy;
 import com.google.gson.reflect.TypeToken;
 import com.ulling.lib.core.base.QcBaseApplication;
@@ -104,13 +107,25 @@ public class QcPreferences {
     }
 
     public void put(String key, String value) {
-        editor.putString(key, value);
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return;
+        }
+        if (value == null) {
+            editor.putString(key, "");
+        } else {
+            editor.putString(key, value);
+        }
         editor.commit();
         if (PREFER_LOG_FLAG)
             QcLog.e("key :" + key + " , value :" + value);
     }
 
     public void put(String key, int value) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return;
+        }
         editor.putInt(key, value);
         editor.commit();
         if (PREFER_LOG_FLAG)
@@ -118,6 +133,10 @@ public class QcPreferences {
     }
 
     public void put(String key, boolean value) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return;
+        }
         editor.putBoolean(key, value);
         editor.commit();
         if (PREFER_LOG_FLAG)
@@ -125,6 +144,10 @@ public class QcPreferences {
     }
 
     public void put(String key, long value) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return;
+        }
         editor.putLong(key, value);
         editor.commit();
         if (PREFER_LOG_FLAG)
@@ -132,99 +155,153 @@ public class QcPreferences {
     }
 
     public void put(String key, float value) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return;
+        }
         editor.putFloat(key, value);
         editor.commit();
         if (PREFER_LOG_FLAG)
             QcLog.e("key :" + key + " , value :" + value);
     }
 
+    public void put(String key, Object object) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return;
+        }
+        if (object == null) {
+            editor.putString(key, "");
+        } else {
+            editor.putString(key, GSON.toJson(object));
+        }
+        editor.commit();
+        if (PREFER_LOG_FLAG && object != null)
+            QcLog.e("key :" + key + " , value :" + object.toString());
+    }
+
+    //    public void put(String key, ArrayList<String> valueList) {
+//        valueList = new ArrayList<String>();
+//        Set<String> value = new HashSet<String>(valueList);
+//        editor.putStringSet(key, value);
+//        editor.commit();
+//        if (PREFER_LOG_FLAG)
+//            QcLog.e("key :" + key + " , value :" + value);
+//    }
+
+    public <T> void putList(String key, List<T> valueList) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return;
+        }
+        if (valueList == null) {
+            editor.putString(key, "");
+        } else {
+            editor.putString(key, GSON.toJson(valueList));
+        }
+        editor.commit();
+        if (PREFER_LOG_FLAG && valueList != null)
+            QcLog.e("key :" + key + " , value :" + valueList);
+    }
+
     public String get(String key, String defValue) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return null;
+        }
         if (PREFER_LOG_FLAG)
             QcLog.e("key :" + key + " , value :" + prefs.getString(key, defValue));
         return prefs.getString(key, defValue);
     }
 
     public int get(String key, int defValue) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return 0;
+        }
         if (PREFER_LOG_FLAG)
             QcLog.e("key :" + key + " , value :" + prefs.getInt(key, defValue));
         return prefs.getInt(key, defValue);
     }
 
-    public boolean getBoolean(String key, boolean defValue) {
+    public boolean get(String key, boolean defValue) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return false;
+        }
         if (PREFER_LOG_FLAG)
             QcLog.e("key :" + key + " , value :" + prefs.getBoolean(key, defValue));
         return prefs.getBoolean(key, defValue);
     }
 
-    public long getLong(String key, long defValue) {
+    public long get(String key, long defValue) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return 0;
+        }
         if (PREFER_LOG_FLAG)
             QcLog.e("key :" + key + " , value :" + prefs.getLong(key, defValue));
         return prefs.getLong(key, defValue);
     }
 
-    public float getFloat(String key, float defValue) {
+    public float get(String key, float defValue) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
+            return 0;
+        }
         if (PREFER_LOG_FLAG)
             QcLog.e("key :" + key + " , value :" + prefs.getFloat(key, defValue));
         return prefs.getFloat(key, defValue);
     }
 
-    public void putSet(String key, ArrayList<String> valueList) {
-        valueList = new ArrayList<String>();
-        Set<String> value = new HashSet<String>(valueList);
-        editor.putStringSet(key, value);
-        editor.commit();
-        if (PREFER_LOG_FLAG)
-            QcLog.e("key :" + key + " , value :" + value);
-    }
-
-    public Object putObject(String key, Object object) {
-        if (object == null) {
-            QcLog.e("Object is null");
-            return null;
-        }
-        if (key.equals("") || key == null) {
+    public <T> T get(String key, Class<T> cls) {
+        if (key == null || key.isEmpty()) {
             QcLog.e("Key is empty or null");
             return null;
         }
-        if (object.equals("")) {
-            editor.putString(key, "");
-        } else {
-            editor.putString(key, GSON.toJson(object));
-        }
-        return editor.commit();
-    }
-
-    public <T> T getObject(String key, Class<T> a) {
         String gson = null;
         try {
-            gson = prefs.getString(key, null);
+            gson = prefs.getString(key, "");
         } catch (Exception e) {
         }
         if (gson == null) {
             return null;
         } else {
             try {
-                return GSON.fromJson(gson, a);
+                return GSON.fromJson(gson, cls);
             } catch (Exception e) {
                 return null;
             }
         }
     }
 
-    public <T> List<Object> getObjectSet(String key, Class<T> a) {
-        List<Object> gsonList = new ArrayList<Object>();
-        String gson = null;
-        try {
-            gson = prefs.getString(key, null);
-        } catch (Exception e) {
-        }
-        if (gson == null) {
+    public <T> List<T> getList(String key, final Class<T> cls) {
+        if (key == null || key.isEmpty()) {
+            QcLog.e("Key is empty or null");
             return null;
         }
-        Type type = new TypeToken<List<Object>>() {
-        }.getType();
-        gsonList = GSON.fromJson(gson, type);
-        return gsonList;
+
+        List<T> list = new ArrayList<T>();
+        String gson = prefs.getString(key, "");
+
+        if (gson.isEmpty()) {
+            return list;
+        } else {
+//            Type type = new TypeToken<List<T>>() {
+//            }.getType();
+//            return GSON.fromJson(gson, type);
+
+            try {
+                JsonArray arry = new JsonParser().parse(gson).getAsJsonArray();
+                for (JsonElement jsonElement : arry) {
+                    list.add(GSON.fromJson(jsonElement, cls));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return list;
+        }
+
     }
 
     public QcPreferences remove(String key) {

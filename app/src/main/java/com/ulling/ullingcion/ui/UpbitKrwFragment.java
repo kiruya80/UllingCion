@@ -10,11 +10,11 @@ import android.view.View;
 import com.ulling.lib.core.listener.OnSingleClickListener;
 import com.ulling.lib.core.ui.QcBaseShowLifeFragement;
 import com.ulling.lib.core.util.QcLog;
-import com.ulling.lib.core.viewutil.adapter.QcRecyclerBaseAdapter;
+import com.ulling.lib.core.util.QcPreferences;
 import com.ulling.ullingcion.QUllingApplication;
 import com.ulling.ullingcion.R;
+import com.ulling.ullingcion.common.Define;
 import com.ulling.ullingcion.databinding.FragmentUpbitKrwBinding;
-import com.ulling.ullingcion.db.UpbitRoomDatabase;
 import com.ulling.ullingcion.entites.UpbitPriceResponse;
 import com.ulling.ullingcion.model.UpbitKrwModel;
 import com.ulling.ullingcion.service.UpbitService;
@@ -22,6 +22,8 @@ import com.ulling.ullingcion.view.adapter.UpbitKrwAdapter;
 import com.ulling.ullingcion.viewmodel.UpbitKrwViewModel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,7 +32,7 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
     private FragmentUpbitKrwBinding viewBinding;
     private UpbitKrwViewModel mUpbitKrwViewModel;
     private UpbitKrwAdapter adapter;
-    private String[] coinSymbol;
+    private ArrayList<String> coinSymbolList;
 
     public static UpbitKrwFragment newInstance() {
         UpbitKrwFragment fragment = new UpbitKrwFragment();
@@ -48,7 +50,9 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needOnShowToUser() {
-        update();
+        List<UpbitPriceResponse> result = QcPreferences.getInstance().getList("upbit_krw_list_01", UpbitPriceResponse.class);
+        if (result != null)
+            QcLog.e("result == " + result.toString());
     }
 
     @Override
@@ -76,22 +80,20 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needUIEventListener() {
-        viewBinding.btnGet.setOnClickListener(new OnSingleClickListener() {
+        viewBinding.btnServiceStart.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-//                update();
+                Intent intent = new Intent(qCon, UpbitService.class);
+                qCon.stopService(intent);
+                intent = new Intent(qCon, UpbitService.class);
+                qCon.startService(intent);
             }
         });
-        viewBinding.btnStartService.setOnClickListener(new OnSingleClickListener() {
+        viewBinding.btnServiceStop.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                if (!qApp.getIsUpbitService().getValue()) {
-                    Intent intent = new Intent(qCon, UpbitService.class);
-                    qCon.startService(intent);
-                } else {
-                    Intent intent = new Intent(qCon, UpbitService.class);
-                    qCon.stopService(intent);
-                }
+                Intent intent = new Intent(qCon, UpbitService.class);
+                qCon.stopService(intent);
             }
         });
     }
@@ -101,26 +103,33 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
         mUpbitKrwViewModel = ViewModelProviders.of(this).get(UpbitKrwViewModel.class);
         mUpbitKrwViewModel.setViewModel(UpbitKrwModel.getInstance());
 
-//        mUpbitKrwViewModel.getKrwList().observe(this, new Observer<List<UpbitPriceResponse>>() {
-//            @Override
-//            public void onChanged(@Nullable List<UpbitPriceResponse> upbitPriceResponses) {
-//                QcLog.e("getKrwList observe === ");
-//                // 원화 상장 예정
-//                if (adapter != null) {
-////                    adapter.addListDiffResult(mUpbitKrwViewModel.getKrwList().getValue());
-//                    adapter.addListDiffResult(upbitPriceResponses);
-//                }
-//            }
-//        });
+        mUpbitKrwViewModel.getKrwList().observe(this, new Observer<List<UpbitPriceResponse>>() {
+            @Override
+            public void onChanged(@Nullable List<UpbitPriceResponse> upbitPriceResponses) {
+                QcLog.e("getKrwList observe === ");
+                // 원화 상장 예정
+                if (adapter != null) {
+//                    List<UpbitPriceResponse> result = QcPreferences.getInstance().getList("upbit_krw_list_01", UpbitPriceResponse.class);
+//                    QcLog.e("result 11== " + result.size() + " , " + result.toString());
+//                    if (result.isEmpty())
+//                        result = new ArrayList<UpbitPriceResponse>();
+//                    result.add(upbitPriceResponses.get(0));
+//                    QcLog.e("result 22== " + result.size() + " , " + result.toString());
+//                    QcPreferences.getInstance().putList("upbit_krw_list_01", result);
+
+                    adapter.addListDiffResult(upbitPriceResponses);
+                }
+            }
+        });
 
         qApp.getIsUpbitService().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean aBoolean) {
                 QcLog.e("getIsUpbitService == " + aBoolean);
                 if (aBoolean) {
-                    viewBinding.btnStartService.setText("Stop");
+                    viewBinding.tvServiceStatus.setText("Service Status : START !");
                 } else {
-                    viewBinding.btnStartService.setText("Start");
+                    viewBinding.tvServiceStatus.setText("Service Status : STOP");
                 }
             }
         });
@@ -136,10 +145,38 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
             SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
             String getTime = simpleDate.format(System.currentTimeMillis());
 
-            coinSymbol = getResources().getStringArray(R.array.array_coin_symbol);
-            if (coinSymbol != null)
-                for (int i = 0; i < coinSymbol.length; i++)
-                    mUpbitKrwViewModel.loadKrwList(coinSymbol[i], "1", getTime);
+//            coinSymbol = getResources().getStringArray(R.array.array_coin_symbol);
+//            if (coinSymbol != null)
+//                for (int i = 0; i < coinSymbol.length; i++)
+//                    mUpbitKrwViewModel.loadKrwList(coinSymbol[i], "1", getTime);
+
+
+            String[] coinSymbol = getResources().getStringArray(R.array.array_coin_symbol);
+
+            coinSymbolList = new ArrayList<>(Arrays.asList(coinSymbol));
+            if (coinSymbolList == null) {
+                return;
+            }
+
+            List<UpbitPriceResponse> result = QcPreferences.getInstance().getList(Define.PRE_UPBIT_KRW_LIST, UpbitPriceResponse.class);
+            QcLog.e("getKrwList observe 11 == " + result.size() + " , " + result.toString());
+            if (result.isEmpty())
+                result = new ArrayList<UpbitPriceResponse>();
+
+            for (int i = 0; i < coinSymbolList.size(); i++) {
+                for (int j = 0; j < result.size(); j++) {
+                    if (!coinSymbolList.get(i).equals(result.get(j).getCode())) {
+                        coinSymbolList.remove(i);
+                    }
+                }
+            }
+
+            if (coinSymbolList.size() == 0) {
+                return;
+            }
+            for (int i = 0; i < coinSymbolList.size(); i++) {
+                mUpbitKrwViewModel.loadKrwList(coinSymbolList.get(i), "1", getTime);
+            }
 
         }
     }
