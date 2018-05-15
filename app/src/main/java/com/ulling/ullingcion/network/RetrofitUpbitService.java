@@ -47,7 +47,6 @@ public class RetrofitUpbitService extends QcBaseRetrofitService {
                 .callbackExecutor(Executors.newSingleThreadExecutor())
                 .client(client)
                 .build();
-        QcLog.e("retrofit == " + retrofit.baseUrl().host().toString());
         return retrofit;
     }
 

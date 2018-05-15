@@ -48,7 +48,6 @@ public class RetrofitLineService extends QcBaseRetrofitService {
                 .callbackExecutor(Executors.newSingleThreadExecutor())
                 .client(client)
                 .build();
-        QcLog.e("retrofit == " + retrofit.baseUrl().host().toString());
         return retrofit;
     }
 
