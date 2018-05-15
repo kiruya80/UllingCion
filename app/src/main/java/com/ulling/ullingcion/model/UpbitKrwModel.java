@@ -2,6 +2,7 @@ package com.ulling.ullingcion.model;
 
 import android.arch.lifecycle.MutableLiveData;
 
+import com.ulling.lib.core.network.QcBaseRetrofitService;
 import com.ulling.lib.core.util.QcLog;
 import com.ulling.lib.core.viewutil.adapter.QcRecyclerBaseAdapter;
 import com.ulling.ullingcion.common.ApiUrl;
@@ -58,7 +59,8 @@ public class UpbitKrwModel {
         return upbitPriceList;
     }
 
-    public void loadKrwList(final String coinSymbol, String count, String to) {
+    public void loadKrwList(final String coinSymbol, String count, String to,
+                            final QcBaseRetrofitService.OnRetrofitListener onRetrofitListener) {
         QcLog.e("coinSymbol " + coinSymbol + " , time " + to);
         Call<List<UpbitPriceResponse>> call = RetrofitUpbitService.getInstance().getKrwCoinAnswers("CRIX.UPBIT.KRW-" + coinSymbol, count, to);
         call.enqueue(new Callback<List<UpbitPriceResponse>>() {
@@ -81,11 +83,14 @@ public class UpbitKrwModel {
 
                         upbitPriceList.postValue(result);
                     }
+                    if (onRetrofitListener != null)
+                        onRetrofitListener.onSuccessful();
 
                 } else {
+                    UpbitErrorResponse mError = new UpbitErrorResponse(response.errorBody().toString());
                     try {
 //                    {"status":404,"error":"Not Found","message":"Not Found","timeStamp":"Sun Apr 29 03:02:57 KST 2018","trace":null}
-                        UpbitErrorResponse mError = (UpbitErrorResponse) RetrofitUpbitService.retrofit.responseBodyConverter(
+                          mError = (UpbitErrorResponse) RetrofitUpbitService.retrofit.responseBodyConverter(
                                 UpbitErrorResponse.class, UpbitErrorResponse.class.getAnnotations())
                                 .convert(response.errorBody());
 //                        QcLog.e("UpbitErrorResponse ==== " + mError.toString());
@@ -106,13 +111,17 @@ public class UpbitKrwModel {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    if (onRetrofitListener != null)
+                        onRetrofitListener.onErrorBody(mError);
                 }
             }
 
             @Override
             public void onFailure(Call<List<UpbitPriceResponse>> call, Throwable t) {
                 QcLog.e("onFailure error loading from API == " + t.toString() + " , " + t.getMessage());
-
+                UpbitErrorResponse mError = new UpbitErrorResponse(t.getMessage());
+                if (onRetrofitListener != null)
+                    onRetrofitListener.onErrorBody(mError);
             }
         });
     }

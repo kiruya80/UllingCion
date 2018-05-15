@@ -6,6 +6,7 @@ import com.ulling.lib.core.common.QcDefine;
 import com.ulling.lib.core.network.QcBaseRetrofitService;
 import com.ulling.lib.core.util.QcLog;
 import com.ulling.ullingcion.common.ApiUrl;
+import com.ulling.ullingcion.common.Define;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -21,12 +22,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class RetrofitUpbitService extends QcBaseRetrofitService {
+public class RetrofitLineService extends QcBaseRetrofitService {
 
-    private static UpbitApi apiInterface;
+    private static LineApi apiInterface;
     public static Retrofit retrofit = null;
 
-    public synchronized static UpbitApi getInstance() {
+    public synchronized static LineApi getInstance() {
         if (apiInterface == null) {
             apiInterface = provideApiService();
         }
@@ -34,8 +35,8 @@ public class RetrofitUpbitService extends QcBaseRetrofitService {
     }
 
 
-    private static UpbitApi provideApiService() {
-        return getRetrofit(ApiUrl.BASE_UPBIT_URL, provideClient(false)).create(UpbitApi.class);
+    private static LineApi provideApiService() {
+        return getRetrofit(ApiUrl.BASE_LINE_URL, provideClient(false)).create(LineApi.class);
     }
 
     public static Retrofit getRetrofit(String baseURL, OkHttpClient client) {
@@ -52,6 +53,22 @@ public class RetrofitUpbitService extends QcBaseRetrofitService {
     }
 
     private static OkHttpClient provideClient(final boolean addParameter) {
+//        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+//        httpClient.addInterceptor(new Interceptor() {
+//                                      @Override
+//                                      public Response intercept(Interceptor.Chain chain) throws IOException {
+//                                          Request original = chain.request();
+//
+//                                          Request request = original.newBuilder()
+//                                                  .header("User-Agent", "Your-App-Name")
+//                                                  .header("Accept", "application/vnd.yourapi.v1.full+json")
+//                                                  .method(original.method(), original.body())
+//                                                  .build();
+//
+//                                          return chain.proceed(request);
+//                                      }
+//                                  }
+
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(QcDefine.DEBUG_FLAG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
 
@@ -60,8 +77,15 @@ public class RetrofitUpbitService extends QcBaseRetrofitService {
         httpClientBuilder.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
+                Request original = chain.request();
                 HttpUrl url;
+
+//                  request = original.newBuilder()
+//                        .header("User-Agent", "Your-App-Name")
+//                        .header("Accept", "application/vnd.yourapi.v1.full+json")
+//                        .method(original.method(), original.body())
+//                        .build();
+
 
                 if (addParameter) {
 //                    QUllingApplication appData = (QUllingApplication) context.getApplicationContext();
@@ -78,11 +102,15 @@ public class RetrofitUpbitService extends QcBaseRetrofitService {
 //                                .addQueryParameter(APIConstants.TARGETAGE, appData.getTargetAge())
 //                                .build();
 
-                    url = request.url().newBuilder().build();
+                    url = original.url().newBuilder().build();
                 } else {
-                    url = request.url().newBuilder().build();
+                    url = original.url().newBuilder().build();
                 }
-                request = request.newBuilder().url(url).build();
+                Request request = original.newBuilder()
+                        .header("authorization", Define.LINE_AUTH)
+                        .header("Content-Type", "application/x-www-form-urlencoded")
+                        .method(original.method(), original.body())
+                        .url(url).build();
                 QcLog.i("request url " + request.url());
                 return chain.proceed(request);
             }
@@ -93,4 +121,6 @@ public class RetrofitUpbitService extends QcBaseRetrofitService {
 
         return enableTlsOnPreLollipop(httpClientBuilder).build();
     }
+
+
 }

@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
+import com.ulling.lib.core.network.QcBaseRetrofitService;
 import com.ulling.lib.core.viewmodel.QcBaseViewModel;
 import com.ulling.ullingcion.entites.UpbitPriceResponse;
 import com.ulling.ullingcion.model.UpbitKrwModel;
@@ -33,8 +34,9 @@ public class UpbitKrwViewModel extends QcBaseViewModel{
     }
 
     // code=CRIX.UPBIT.KRW-XVG&count=2&to=2018-05-04%2017:30:00
-    public void loadKrwList(String coinSymbol, String count, String to) {
-        if (upbitKrwModel != null)
-        upbitKrwModel.loadKrwList(coinSymbol, count, to);
+    public void loadKrwList(String coinSymbol, String count, String to, QcBaseRetrofitService.OnRetrofitListener mOnRetrofitListener) {
+        if (upbitKrwModel != null) {
+            upbitKrwModel.loadKrwList(coinSymbol, count, to, mOnRetrofitListener);
+        }
     }
 }

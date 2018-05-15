@@ -88,6 +88,10 @@
         <item>@string/coin_symbol_excl</item>
         <item>@string/coin_symbol_nbt</item>
         <item>@string/coin_symbol_unb</item>
+
+
+        <item>@string/coin_symbol_blt</item>
+
     </string-array>
 
 

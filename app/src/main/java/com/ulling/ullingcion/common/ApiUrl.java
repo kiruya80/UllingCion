@@ -29,6 +29,8 @@ public class ApiUrl extends QcApiURL {
     public static final String BASE_COIN_LOGO_URL = "https://static.upbit.com/logos/";
 
 
+    // https://notify-api.line.me/api/notify
+    public static final String BASE_LINE_URL = "https://notify-api.line.me/";
 
 
 }

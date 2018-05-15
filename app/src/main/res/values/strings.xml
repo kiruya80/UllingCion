@@ -90,4 +90,7 @@
     <string name="coin_symbol_excl">EXCL</string>
     <string name="coin_symbol_nbt">NBT</string>
     <string name="coin_symbol_unb">UNB</string>
+
+    <string name="coin_symbol_blt">BLT</string>
+
 </resources>

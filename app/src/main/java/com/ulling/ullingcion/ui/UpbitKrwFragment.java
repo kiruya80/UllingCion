@@ -8,37 +8,45 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.ulling.lib.core.listener.OnSingleClickListener;
+import com.ulling.lib.core.network.QcBaseRetrofitService;
 import com.ulling.lib.core.ui.QcBaseShowLifeFragement;
 import com.ulling.lib.core.util.QcLog;
 import com.ulling.lib.core.util.QcPreferences;
+import com.ulling.lib.core.util.QcToast;
 import com.ulling.ullingcion.QUllingApplication;
 import com.ulling.ullingcion.R;
 import com.ulling.ullingcion.common.Define;
 import com.ulling.ullingcion.databinding.FragmentUpbitKrwBinding;
 import com.ulling.ullingcion.entites.UpbitPriceResponse;
+import com.ulling.ullingcion.model.LineModel;
 import com.ulling.ullingcion.model.UpbitKrwModel;
 import com.ulling.ullingcion.service.UpbitService;
 import com.ulling.ullingcion.view.adapter.UpbitKrwAdapter;
+import com.ulling.ullingcion.viewmodel.LineViewModel;
 import com.ulling.ullingcion.viewmodel.UpbitKrwViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 public class UpbitKrwFragment extends QcBaseShowLifeFragement {
     private QUllingApplication qApp;
     private FragmentUpbitKrwBinding viewBinding;
     private UpbitKrwViewModel mUpbitKrwViewModel;
     private UpbitKrwAdapter adapter;
-    private ArrayList<String> coinSymbolList;
+
+    LineViewModel mLineViewModel;
 
     public static UpbitKrwFragment newInstance() {
         UpbitKrwFragment fragment = new UpbitKrwFragment();
         Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -94,6 +102,10 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
             public void onSingleClick(View v) {
                 Intent intent = new Intent(qCon, UpbitService.class);
                 qCon.stopService(intent);
+
+                if (mLineViewModel == null)
+                    initLineViewModel();
+                mLineViewModel.sendMsg( "라인 노티 테스트 !!! ");
             }
         });
     }
@@ -109,14 +121,6 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
                 QcLog.e("getKrwList observe === ");
                 // 원화 상장 예정
                 if (adapter != null) {
-//                    List<UpbitPriceResponse> result = QcPreferences.getInstance().getList("upbit_krw_list_01", UpbitPriceResponse.class);
-//                    QcLog.e("result 11== " + result.size() + " , " + result.toString());
-//                    if (result.isEmpty())
-//                        result = new ArrayList<UpbitPriceResponse>();
-//                    result.add(upbitPriceResponses.get(0));
-//                    QcLog.e("result 22== " + result.size() + " , " + result.toString());
-//                    QcPreferences.getInstance().putList("upbit_krw_list_01", result);
-
                     adapter.addListDiffResult(upbitPriceResponses);
                 }
             }
@@ -133,56 +137,33 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
                 }
             }
         });
-//        adapter.addList(mUpbitKrwViewModel.getKrwList().getValue());
     }
 
-    private void update() {
-        if (mUpbitKrwViewModel != null) {
-            // 원화상자예정
-//        https://crix-api-cdn.upbit.com/v1/crix/candles/minutes/1?code=CRIX.UPBIT.KRW-GTO&count=2&to=2018-04-20%2011:42:00
-//            mUpbitKrwViewModel.loadKrwList("GTO", "1", "2018-04-07 11:42:00");
-
-            SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
-            String getTime = simpleDate.format(System.currentTimeMillis());
-
-//            coinSymbol = getResources().getStringArray(R.array.array_coin_symbol);
-//            if (coinSymbol != null)
-//                for (int i = 0; i < coinSymbol.length; i++)
-//                    mUpbitKrwViewModel.loadKrwList(coinSymbol[i], "1", getTime);
-
-
-            String[] coinSymbol = getResources().getStringArray(R.array.array_coin_symbol);
-
-            coinSymbolList = new ArrayList<>(Arrays.asList(coinSymbol));
-            if (coinSymbolList == null) {
-                return;
-            }
-
-            List<UpbitPriceResponse> result = QcPreferences.getInstance().getList(Define.PRE_UPBIT_KRW_LIST, UpbitPriceResponse.class);
-            QcLog.e("getKrwList observe 11 == " + result.size() + " , " + result.toString());
-            if (result.isEmpty())
-                result = new ArrayList<UpbitPriceResponse>();
-
-            for (int i = 0; i < coinSymbolList.size(); i++) {
-                for (int j = 0; j < result.size(); j++) {
-                    if (!coinSymbolList.get(i).equals(result.get(j).getCode())) {
-                        coinSymbolList.remove(i);
-                    }
-                }
-            }
-
-            if (coinSymbolList.size() == 0) {
-                return;
-            }
-            for (int i = 0; i < coinSymbolList.size(); i++) {
-                mUpbitKrwViewModel.loadKrwList(coinSymbolList.get(i), "1", getTime);
-            }
-
-        }
+    public void initLineViewModel() {
+        mLineViewModel = new LineViewModel(qApp);
+        mLineViewModel.setViewModel(LineModel.getInstance());
     }
 
     @Override
     protected void needSubscribeUiClear() {
     }
 
+    private QcBaseRetrofitService.OnRetrofitListener mOnRetrofitListener
+            = new QcBaseRetrofitService.OnRetrofitListener<UpbitPriceResponse>() {
+
+        @Override
+        public void onSuccessful() {
+
+        }
+
+        @Override
+        public void onErrorBody(UpbitPriceResponse upbitPriceResponse) {
+
+        }
+
+        @Override
+        public void onFailure(String msg) {
+
+        }
+    };
 }

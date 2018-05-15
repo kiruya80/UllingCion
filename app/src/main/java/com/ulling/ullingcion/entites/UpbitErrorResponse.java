@@ -26,11 +26,15 @@ public class UpbitErrorResponse {
     private String trace;
 
 
+    public UpbitErrorResponse(String message) {
+        this.message = message;
+    }
+
     public UpbitErrorResponse(int status, String error, String message, String timeStamp,  String trace) {
+        this.status = status;
+        this.error = error;
         this.message = message;
         this.timeStamp = timeStamp;
-        this.error = error;
-        this.status = status;
         this.trace = trace;
     }
 

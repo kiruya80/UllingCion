@@ -21,27 +21,29 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class QcBaseRetrofitService {
     public static final int HTTP_READ_TIMEOUT = 5000;
     public static final int HTTP_CONNECT_TIMEOUT = 4000;
-    public static Retrofit retrofit = null;
 
-    protected static Retrofit getProvideRetrofit(String baseURL, OkHttpClient client) {
-        if (retrofit == null && !TextUtils.isEmpty(baseURL)) {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(baseURL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .addConverterFactory(ScalarsConverterFactory.create())  // post 날릴려면 필요!
-                    //execute call back in background thread
-                    .callbackExecutor(Executors.newSingleThreadExecutor())
-                    .build();
-        }
-        return retrofit;
-//        return new Retrofit.Builder()
-//                .baseUrl(baseURL)
-//                .client(client)
-//                .addConverterFactory(NullOnEmptyConverterFactory.create())
-//                .addConverterFactory(ScalarsConverterFactory.create())  // post 날릴려면 필요!
-//                .addConverterFactory(GsonConverterFactory.create(/*gson*/))
-//                .build();
+    public interface OnRetrofitListener<T> {
+        void onSuccessful();
+
+        void onErrorBody(T t);
+
+        void onFailure(String msg);
     }
+
+//
+//    public static Retrofit getRetrofit(String baseURL, OkHttpClient client) {
+//        if (retrofit == null && !TextUtils.isEmpty(baseURL)) {
+//            retrofit = new Retrofit.Builder()
+//                    .baseUrl(baseURL)
+//                    .addConverterFactory(GsonConverterFactory.create())
+//                    .addConverterFactory(ScalarsConverterFactory.create())  // post 날릴려면 필요!
+//                    //execute call back in background thread
+//                    .callbackExecutor(Executors.newSingleThreadExecutor())
+//                    .client(client)
+//                    .build();
+//        }
+//        return retrofit;
+//    }
 
     protected static OkHttpClient.Builder enableTlsOnPreLollipop(OkHttpClient.Builder builder) {
         if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 22) {
