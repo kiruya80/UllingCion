@@ -1,6 +1,7 @@
 package com.ulling.ullingcion.service;
 
 import android.arch.lifecycle.LifecycleService;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -18,9 +19,12 @@ import com.ulling.lib.core.util.QcToast;
 import com.ulling.ullingcion.QUllingApplication;
 import com.ulling.ullingcion.R;
 import com.ulling.ullingcion.common.Define;
+import com.ulling.ullingcion.entites.Cryptowat.CryptowatSummary;
 import com.ulling.ullingcion.entites.UpbitPriceResponse;
+import com.ulling.ullingcion.model.CryptoWatchModel;
 import com.ulling.ullingcion.model.LineModel;
 import com.ulling.ullingcion.model.UpbitKrwModel;
+import com.ulling.ullingcion.viewmodel.CryptoWatchViewModel;
 import com.ulling.ullingcion.viewmodel.LineViewModel;
 import com.ulling.ullingcion.viewmodel.UpbitKrwViewModel;
 
@@ -35,12 +39,19 @@ import java.util.Map;
 public class UpbitService extends LifecycleService {
     private final int THREAD_PRIORITY_BACKGROUND = 1000;
     private final int HANDLE_UPBIT = 10;
+    private final int HANDLE_CRYPTOWATCH = 20;
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     private QUllingApplication qApp;
     private boolean startService = false;
     private UpbitKrwViewModel mUpbitKrwViewModel;
+    private CryptoWatchViewModel mCryptoWatchViewModel;
+
+
     private ArrayList<String> coinSymbolList;
+
+    private boolean isUpdateUpbit =false;
+    private boolean isCryptoWatch =false;
 
     private LineViewModel mLineViewModel;
 
@@ -56,14 +67,32 @@ public class UpbitService extends LifecycleService {
         public void handleMessage(Message msg) {
             QcLog.e("handleMessage == " + msg.arg1);
             if (startService) {
-                try {
-                    // 10분 마다
-                    Thread.sleep(3 * 60 * 1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                if (msg.arg1 == HANDLE_UPBIT) {
+                    try {
+                        // 3분 마다 / 일정 시간은 정지하게
+                        Thread.sleep(3 * 60 * 1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+
+                    if (isUpdateUpbit)
+                        updateUpbitKrw();
+
+                } else  if (msg.arg1 == HANDLE_CRYPTOWATCH) {
+                    try {
+                        // 10분 마다
+                        Thread.sleep(1 * 60 * 1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+
+                    if (isCryptoWatch)
+                        updateCryptoSummary();
+
                 }
-//            stopSelf(msg.arg1);
-                update();
+
+                if (!isUpdateUpbit && ! isCryptoWatch)
+                    stopSelf();
             }
         }
     }
@@ -88,6 +117,66 @@ public class UpbitService extends LifecycleService {
 
         mUpbitKrwViewModel = new UpbitKrwViewModel(qApp);
         mUpbitKrwViewModel.setViewModel(UpbitKrwModel.getInstance());
+
+
+        mCryptoWatchViewModel = new CryptoWatchViewModel(qApp);
+        mCryptoWatchViewModel.setViewModel(CryptoWatchModel.getInstance());
+
+
+        if (mCryptoWatchViewModel != null) {
+            mCryptoWatchViewModel.getSummary().observe(this, new Observer<CryptowatSummary>() {
+                @Override
+                public void onChanged(@Nullable CryptowatSummary cryptowatSummary) {
+                    QcLog.e("observe getSummary == " +cryptowatSummary.toString());
+
+                    if (cryptowatSummary != null && cryptowatSummary.getResult() != null) {
+                        Double ladtPrice = Double.parseDouble(cryptowatSummary.getResult().getPrice().getLast());
+                        if (mLineViewModel == null)
+                            initLineViewModel();
+
+                        if (ladtPrice <= 7200) {
+                            mLineViewModel.sendMsg(cryptowatSummary.toString());
+                            return;
+                        }
+                        if (ladtPrice <= 7300) {
+                            mLineViewModel.sendMsg(cryptowatSummary.toString());
+                            return;
+                        }
+                        if (ladtPrice <= 7400) {
+                            mLineViewModel.sendMsg(cryptowatSummary.toString());
+                            return;
+                        }
+                        if (ladtPrice <= 7500) {
+                            mLineViewModel.sendMsg(cryptowatSummary.toString());
+                            return;
+                        }
+                        if (ladtPrice <= 7600) {
+                            mLineViewModel.sendMsg(cryptowatSummary.toString());
+                            return;
+                        }
+                        if (ladtPrice <= 7700) {
+                            mLineViewModel.sendMsg(cryptowatSummary.toString());
+                            return;
+                        }
+                        if (ladtPrice <= 7800) {
+                            mLineViewModel.sendMsg(cryptowatSummary.toString());
+                            return;
+                        }
+                        if (ladtPrice <= 7900) {
+                            mLineViewModel.sendMsg(cryptowatSummary.toString());
+                            return;
+                        }
+                        if (ladtPrice <= 8000) {
+                            mLineViewModel.sendMsg(cryptowatSummary.toString());
+                            return;
+                        }
+                    }
+                }
+            });
+        }
+
+        isUpdateUpbit = true;
+        isCryptoWatch = true;
     }
 
     @Override
@@ -118,19 +207,23 @@ public class UpbitService extends LifecycleService {
                     QcPreferences.getInstance().putList(Define.PRE_UPBIT_KRW_LIST, result);
 
                 }
-                stopSelf();
+//                isUpdateUpbit = false;
             }
         });
 
-        update();
+        updateUpbitKrw();
+        updateCryptoSummary();
 
+        if (mLineViewModel == null)
+            initLineViewModel();
+        mLineViewModel.sendMsg("Coin Service START !");
         return super.onStartCommand(intent, flags, startId);
 //        return START_STICKY;
     }
 
-    private void update() {
+    private void updateUpbitKrw() {
         if (mUpbitKrwViewModel != null) {
-            QcLog.e("update ==");
+            QcLog.e("UpdateUpbitKrw ==");
             // 원화상자예정
 //        https://crix-api-cdn.upbit.com/v1/crix/candles/minutes/1?code=CRIX.UPBIT.KRW-GTO&count=2&to=2018-04-20%2011:42:00
 //            mUpbitKrwViewModel.loadKrwList("GTO", "1", "2018-04-07 11:42:00", null);
@@ -176,6 +269,13 @@ public class UpbitService extends LifecycleService {
         }
     }
 
+    private void updateCryptoSummary() {
+        if (mCryptoWatchViewModel != null) {
+            mCryptoWatchViewModel.loadSummary();
+
+            startCryptoSummary();
+        }
+    }
 
     public void initLineViewModel() {
         mLineViewModel = new LineViewModel(qApp);
@@ -185,6 +285,12 @@ public class UpbitService extends LifecycleService {
     public void startUpbitKrw() {
         Message msg = mServiceHandler.obtainMessage();
         msg.arg1 = HANDLE_UPBIT;
+        mServiceHandler.sendMessage(msg);
+    }
+
+    public void startCryptoSummary() {
+        Message msg = mServiceHandler.obtainMessage();
+        msg.arg1 = HANDLE_CRYPTOWATCH;
         mServiceHandler.sendMessage(msg);
     }
 
@@ -206,6 +312,9 @@ public class UpbitService extends LifecycleService {
     public void onDestroy() {
         super.onDestroy();
         QcLog.e("onDestroy ==");
+        if (mLineViewModel == null)
+            initLineViewModel();
+        mLineViewModel.sendMsg("Coin Service STOP !");
         startService = false;
         qApp.getIsUpbitService().postValue(false);
         QcToast.getInstance().show("Service Destroy ! ", false);

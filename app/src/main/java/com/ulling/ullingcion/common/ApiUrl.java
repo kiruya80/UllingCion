@@ -32,5 +32,6 @@ public class ApiUrl extends QcApiURL {
     // https://notify-api.line.me/api/notify
     public static final String BASE_LINE_URL = "https://notify-api.line.me/";
 
-
+    //  https://api.cryptowat.ch/markets/bitfinex/btcusd/summary
+    public static final String BASE_CRYPTOWAT_URL = "https://api.cryptowat.ch/";
 }

@@ -1,22 +1,15 @@
 package com.ulling.ullingcion.network;
 
-import com.ulling.ullingcion.common.Define;
+import com.ulling.ullingcion.entites.Cryptowat.CryptowatSummary;
 import com.ulling.ullingcion.entites.LineMsgResponse;
-import com.ulling.ullingcion.entites.UpbitPriceResponse;
 
-import java.util.List;
 import java.util.Map;
 
-import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 
 
 /**
@@ -27,10 +20,9 @@ import retrofit2.http.Query;
  * https://stackoverflow.com/questions/36730086/retrofit-2-url-query-parameter
  *
  */
-public interface LineApi {
+public interface CryptowatApi {
 
-    @FormUrlEncoded
-    @POST("api/notify")
-    Call<LineMsgResponse> sendMsg(@FieldMap Map<String,String> body);
+    @GET("markets/bitfinex/btcusd/summary")
+    Call<CryptowatSummary> getSummary();
 
 }

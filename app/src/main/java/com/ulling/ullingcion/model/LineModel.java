@@ -33,7 +33,7 @@ public class LineModel {
 
     public void sendMsg(Map<String, String> params) {
         QcLog.e("sendMsg ===  " + params.toString());
-        Call<LineMsgResponse> call = RetrofitLineService.getInstance().sendMsgRequest(params);
+        Call<LineMsgResponse> call = RetrofitLineService.getInstance().sendMsg(params);
         call.enqueue(new Callback<LineMsgResponse>() {
             @Override
             public void onResponse(Call<LineMsgResponse> call, Response<LineMsgResponse> response) {

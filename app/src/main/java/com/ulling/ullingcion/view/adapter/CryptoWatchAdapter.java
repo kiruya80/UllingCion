@@ -1,6 +1,5 @@
 package com.ulling.ullingcion.view.adapter;
 
-import android.arch.lifecycle.AndroidViewModel;
 import android.databinding.ViewDataBinding;
 
 import com.ulling.lib.core.ui.QcBaseLifeFragment;
@@ -9,7 +8,7 @@ import com.ulling.lib.core.viewutil.adapter.QcBaseViewHolder;
 import com.ulling.lib.core.viewutil.adapter.QcRecyclerBaseAdapter;
 import com.ulling.ullingcion.R;
 import com.ulling.ullingcion.databinding.RowCryptowatchBinding;
-import com.ulling.ullingcion.entites.CryptoWatch;
+import com.ulling.ullingcion.entites.Cryptowat.CryptoWatch;
 import com.ulling.ullingcion.viewmodel.CryptoWatchViewModel;
 
 import java.text.SimpleDateFormat;

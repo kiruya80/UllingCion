@@ -1,9 +1,14 @@
 package com.ulling.ullingcion.viewmodel;
 
 import android.app.Application;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
+import com.ulling.lib.core.util.QcLog;
 import com.ulling.lib.core.viewmodel.QcBaseViewModel;
+import com.ulling.ullingcion.entites.Cryptowat.CryptowatSummary;
+import com.ulling.ullingcion.model.CryptoWatchModel;
 
 /**
  *
@@ -12,8 +17,31 @@ import com.ulling.lib.core.viewmodel.QcBaseViewModel;
  * DataModel과 비슷하게, ViewModel은 Observable을 통해서 데이터를 노출시킵니다.
  */
 public class CryptoWatchViewModel extends QcBaseViewModel {
+
+    private CryptoWatchModel cryptoWatchModel;
+
+    private MutableLiveData<CryptowatSummary> cryptowatSummary = null;
+
     public CryptoWatchViewModel(@NonNull Application application) {
         super(application);
+    }
+
+    public void setViewModel(CryptoWatchModel cryptoWatchModel) {
+        this.cryptoWatchModel = cryptoWatchModel;
+    }
+
+
+    public LiveData<CryptowatSummary> getSummary( ) {
+        if (cryptowatSummary == null && cryptoWatchModel != null) {
+            cryptowatSummary = cryptoWatchModel.getSummary( );
+        }
+        return cryptowatSummary;
+    }
+
+    public void loadSummary() {
+        if (cryptoWatchModel != null) {
+            cryptoWatchModel.loadSummary();
+        }
     }
 
 }

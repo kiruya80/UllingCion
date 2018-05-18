@@ -102,12 +102,6 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
             public void onSingleClick(View v) {
                 Intent intent = new Intent(qCon, UpbitService.class);
                 qCon.stopService(intent);
-
-                if (mLineViewModel == null) {
-                    initLineViewModel();
-                    mLineViewModel.sendMsg("라인 노티 테스트 !!! ");
-                    QcToast.getInstance().show("라인 노티 테스트 !!! ", false);
-                }
             }
         });
     }
