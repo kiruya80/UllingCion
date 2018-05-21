@@ -25,4 +25,21 @@ public class Define extends QcDefine {
     public static final String PRE_UPBIT_KRW_LIST = "PRE_UPBIT_KRW_LIST";
     public static final String LINE_AUTH = "Bearer ceN0PqIIuEdA9acv35az7YCyVQcdXJtOf1GwgAr4oxN";
 
+
+    public static final int VALUE_CRYPTOWAT_1M = 60;
+    public static final int VALUE_CRYPTOWAT_3M = 180;
+    public static final int VALUE_CRYPTOWAT_5M = 300;
+    public static final int VALUE_CRYPTOWAT_15M = 900;
+    public static final int VALUE_CRYPTOWAT_30M = 1800;
+
+    public static final int VALUE_CRYPTOWAT_1H = 3600;
+    public static final int VALUE_CRYPTOWAT_2H = 7200;
+    public static final int VALUE_CRYPTOWAT_4H = 14400;
+    public static final int VALUE_CRYPTOWAT_6H = 21600;
+    public static final int VALUE_CRYPTOWAT_12H = 43200;
+
+    public static final int VALUE_CRYPTOWAT_1D = 86400;
+    public static final int VALUE_CRYPTOWAT_3D = 259200;
+    public static final int VALUE_CRYPTOWAT_1W = 604800;
+
 }

@@ -1,6 +1,6 @@
 package com.ulling.ullingcion.entites.Cryptowat;
 
-public class Result {
+public class SummaryResult {
     private Price price;
 
     private String volume;

@@ -3,23 +3,22 @@ package com.ulling.ullingcion.entites.Cryptowat;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.ulling.lib.core.entities.QcBaseItem;
-import com.ulling.ullingcion.entites.Allowance;
-import com.ulling.ullingcion.entites.Result;
 
-public class CryptowatchOHLC extends QcBaseItem {
+public class CryptoWatchCandles extends QcBaseItem {
 
     @SerializedName("result")
     @Expose
-    private Result result;
+    private CandlesResult result;
+
     @SerializedName("allowance")
     @Expose
     private Allowance allowance;
 
-    public Result getResult() {
+    public CandlesResult getResult() {
         return result;
     }
 
-    public void setResult(Result result) {
+    public void setResult(CandlesResult result) {
         this.result = result;
     }
 
@@ -29,5 +28,13 @@ public class CryptowatchOHLC extends QcBaseItem {
 
     public void setAllowance(Allowance allowance) {
         this.allowance = allowance;
+    }
+
+    @Override
+    public String toString() {
+        return "CryptoWatchCandles{" +
+                "result=" + result +
+                ", allowance=" + allowance +
+                '}';
     }
 }

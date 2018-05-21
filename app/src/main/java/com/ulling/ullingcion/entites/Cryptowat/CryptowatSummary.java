@@ -3,15 +3,15 @@ package com.ulling.ullingcion.entites.Cryptowat;
 import com.ulling.lib.core.entities.QcBaseItem;
 
 public class CryptowatSummary extends QcBaseItem {
-    private Result result = null;
+    private SummaryResult result = null;
 
     private Allowance allowance;
 
-    public Result getResult() {
+    public SummaryResult getResult() {
         return result;
     }
 
-    public void setResult(Result result) {
+    public void setResult(SummaryResult result) {
         this.result = result;
     }
 

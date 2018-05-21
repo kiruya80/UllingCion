@@ -1,29 +1,38 @@
 package com.ulling.ullingcion.entites.Cryptowat;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Allowance {
-    private String remaining;
 
-    private String cost;
+    @SerializedName("cost")
+    @Expose
+    private long cost;
+    @SerializedName("remaining")
+    @Expose
+    private long remaining;
 
-    public String getRemaining() {
-        return remaining;
-    }
-
-    public void setRemaining(String remaining) {
-        this.remaining = remaining;
-    }
-
-    public String getCost() {
+    public long getCost() {
         return cost;
     }
 
-    public void setCost(String cost) {
+    public void setCost(long cost) {
         this.cost = cost;
+    }
+
+    public long getRemaining() {
+        return remaining;
+    }
+
+    public void setRemaining(long remaining) {
+        this.remaining = remaining;
     }
 
     @Override
     public String toString() {
-        return "\nremaining='" + remaining +
-                "\ncost='" + cost;
+        return "Allowance{" +
+                "cost=" + cost +
+                ", remaining=" + remaining +
+                '}';
     }
 }
