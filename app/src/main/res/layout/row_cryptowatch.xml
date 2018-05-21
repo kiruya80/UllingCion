@@ -7,15 +7,22 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvPosition"
-            android:layout_width="@dimen/p300"
-            android:layout_height="match_parent"
-            android:background="@color/color_black_trance_10"
-            android:gravity="center"
-            android:textColor="@color/color_black"
-            android:textSize="@dimen/p40" />
 
+        <LinearLayout
+            android:id="@+id/llTime"
+            android:layout_width="@dimen/p500"
+            android:layout_height="@dimen/p300"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_margin="@dimen/p10"
+                android:textColor="@color/color_white" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,28 +32,30 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/color_black"
-                android:textSize="@dimen/p40" />
 
             <TextView
-                android:id="@+id/tvPrice"
+                android:id="@+id/tvOpenPrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/color_black"
-                android:textSize="@dimen/p40" />
-
+                android:textColor="@color/color_black" />
 
             <TextView
-                android:id="@+id/tvRsi"
+                android:id="@+id/tvClosePrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/p10"
-                android:textColor="@color/color_black"
-                android:textSize="@dimen/p60" />
+                android:textColor="@color/color_black" />
+
+            <TextView
+                android:id="@+id/tvHighPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_black" />
+
+            <TextView
+                android:id="@+id/tvLowPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_black" />
 
         </LinearLayout>
     </LinearLayout>

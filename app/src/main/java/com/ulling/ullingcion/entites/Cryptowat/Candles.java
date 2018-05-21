@@ -1,6 +1,8 @@
 package com.ulling.ullingcion.entites.Cryptowat;
 
-public class Candles {
+import com.ulling.lib.core.entities.QcBaseItem;
+
+public class Candles extends QcBaseItem {
     private long closeTime;
     private double openPrice;
     private double highPrice;

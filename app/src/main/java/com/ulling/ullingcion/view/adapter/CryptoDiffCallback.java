@@ -1,50 +1,47 @@
-package com.ulling.lib.core.util;
+package com.ulling.ullingcion.view.adapter;
 
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 
+import com.ulling.ullingcion.entites.Cryptowat.Candles;
+
 import java.util.List;
 
-public class QcDiffCallback<T> extends DiffUtil.Callback {
+public class CryptoDiffCallback extends DiffUtil.Callback {
+    private List<Candles> mOldItemList;
+    private List<Candles> mNewItemList;
 
-    private List<T> mOldItemList;
-    private List<T> mNewItemList;
-
-    public QcDiffCallback(List<T> mOldItemList, List<T> mNewItemList) {
+    public CryptoDiffCallback(List<Candles> mOldItemList, List<Candles> mNewItemList) {
         this.mOldItemList = mOldItemList;
         this.mNewItemList = mNewItemList;
     }
 
-    // 이전 목록의 개수를 반환합니다.
     @Override
     public int getOldListSize() {
         return mOldItemList != null ? mOldItemList.size() : 0;
     }
 
-    // 새로운 목록의 개수를 반환합니다.
     @Override
     public int getNewListSize() {
         return mNewItemList != null ? mNewItemList.size() : 0;
     }
 
-    // 두 객체가 같은 항목인지 여부를 결정합니다.
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return mOldItemList.get(oldItemPosition).equals(
-                mNewItemList.get(newItemPosition));
+        return mOldItemList.get(oldItemPosition).getCloseTime() ==
+                mNewItemList.get(newItemPosition).getCloseTime();
     }
 
-    // 두 항목의 데이터가 같은지 여부를 결정합니다. areItemsTheSame()이 true를 반환하는 경우에만 호출됩니다.
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        T newItem = mNewItemList.get(newItemPosition);
-        T oldItem = mOldItemList.get(oldItemPosition);
+        Candles newItem = mNewItemList.get(newItemPosition);
+        Candles oldItem = mOldItemList.get(oldItemPosition);
 
-        return oldItem.equals(newItem);
+        return oldItem.getOpenPrice() == newItem.getOpenPrice()
+                && oldItem.getClosePrice() == newItem.getClosePrice();
     }
 
-    // 만약 areItemTheSame()이 true를 반환하고
-    // areContentsTheSame()이 false를 반환하면 이 메서드가 호출되어 변경 내용에 대한 페이로드를 가져옵니다.
+
     @Nullable
     @Override
     public Object getChangePayload(int oldItemPosition, int newItemPosition) {

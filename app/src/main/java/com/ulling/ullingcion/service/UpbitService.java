@@ -225,7 +225,7 @@ public class UpbitService extends LifecycleService {
                 }
             });
 
-            mCryptoWatchViewModel.getCandles().observe(this, new Observer<CryptoWatchCandles>() {
+            mCryptoWatchViewModel.getCandlesStick().observe(this, new Observer<CryptoWatchCandles>() {
                 @Override
                 public void onChanged(@Nullable CryptoWatchCandles cryptoWatchCandles) {
                     QcLog.e("observe getCandles == " + cryptoWatchCandles.toString());
@@ -234,24 +234,20 @@ public class UpbitService extends LifecycleService {
                         if (cryptoWatchCandles.getResult().getCandles_1D() != null) {
                             for (int i = 0; i < cryptoWatchCandles.getResult().getCandles_1D().size(); i++) {
                                 List<String> list = cryptoWatchCandles.getResult().getCandles_1D().get(i);
-                                long coinTime = Long.parseLong(list.get(0)) * 1000;
+                                long closeTime = Long.parseLong(list.get(0)) * 1000;
 
                                 Double OpenPrice = Double.parseDouble(list.get(1));
                                 Double HighPrice = Double.parseDouble(list.get(2));
                                 Double LowPrice = Double.parseDouble(list.get(3));
                                 Double ClosePrice = Double.parseDouble(list.get(4));
                                 Double Volume = Double.parseDouble(list.get(5));
-                                Date date = new Date(coinTime);
+                                Date date = new Date(closeTime);
 
                                 String formattedDate = simpleDate.format(date);
                                 QcLog.e("formattedDate == " + formattedDate + " == OpenPrice " + OpenPrice + " , " + HighPrice + " , " + LowPrice + " , " + ClosePrice + " , " + Volume);
                             }
                         }
 
-                        QcLog.e("observe ================ ");
-                        if (cryptoWatchCandles.getResult().getCandles_2D() != null) {
-                            QcLog.e("observe getCandles_2D == " + cryptoWatchCandles.getResult().getCandles_2D().toString());
-                        }
                     }
                 }
             });
@@ -259,7 +255,7 @@ public class UpbitService extends LifecycleService {
 
         isUpdateUpbit = true;
         isCryptoWatch = true;
-        isCryptoWatchCandles = true;
+//        isCryptoWatchCandles = true;
     }
 
     @Override
@@ -269,7 +265,7 @@ public class UpbitService extends LifecycleService {
 
         updateUpbitKrw();
         updateCryptoSummary();
-        updateCryptoCandles();
+//        updateCryptoCandles();
 
         mLineViewModel.sendMsg("Coin Service START !");
 
@@ -340,9 +336,9 @@ public class UpbitService extends LifecycleService {
             Date after = QcUtil.GetDate(2017, 1, 1, 0, 0, 0);
             mCryptoWatchViewModel.loadCandlesStick(QcUtil.GetUnixTime(after.getTime()), Define.VALUE_CRYPTOWAT_1D);
 
-            Message msg = mServiceHandler.obtainMessage();
-            msg.arg1 = HANDLE_CRYPTOWATCH_CANDLES;
-            mServiceHandler.sendMessage(msg);
+//            Message msg = mServiceHandler.obtainMessage();
+//            msg.arg1 = HANDLE_CRYPTOWATCH_CANDLES;
+//            mServiceHandler.sendMessage(msg);
         }
     }
 

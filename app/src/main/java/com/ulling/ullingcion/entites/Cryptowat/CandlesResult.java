@@ -2,11 +2,11 @@ package com.ulling.ullingcion.entites.Cryptowat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.ulling.lib.core.entities.QcBaseItem;
 
 import java.util.List;
 
 public class CandlesResult {
-
 
     @SerializedName("60")
     @Expose
@@ -51,7 +51,7 @@ public class CandlesResult {
 
     @SerializedName("259200")
     @Expose
-    private List<List<String>> candles_2D = null;
+    private List<List<String>> candles_3D = null;
 
     @SerializedName("604800")
     @Expose
@@ -145,12 +145,12 @@ public class CandlesResult {
         this.candles_1D = candles_1D;
     }
 
-    public List<List<String>> getCandles_2D() {
-        return candles_2D;
+    public List<List<String>> getCandles_3D() {
+        return candles_3D;
     }
 
-    public void setCandles_2D(List<List<String>> candles_2D) {
-        this.candles_2D = candles_2D;
+    public void setCandles_2D(List<List<String>> candles_3D) {
+        this.candles_3D = candles_3D;
     }
 
     public List<List<String>> getCandles_1W() {

@@ -1,21 +1,39 @@
 package com.ulling.ullingcion.ui;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
+import com.ulling.lib.core.listener.OnSingleClickListener;
 import com.ulling.lib.core.ui.QcBaseShowLifeFragement;
 import com.ulling.lib.core.util.QcLog;
+import com.ulling.lib.core.util.QcUtil;
 import com.ulling.lib.core.viewutil.adapter.QcRecyclerBaseAdapter;
 import com.ulling.ullingcion.QUllingApplication;
 import com.ulling.ullingcion.R;
+import com.ulling.ullingcion.common.Define;
 import com.ulling.ullingcion.databinding.FragmentCryptowatchBinding;
+import com.ulling.ullingcion.entites.Cryptowat.Candles;
+import com.ulling.ullingcion.entites.Cryptowat.CryptoWatchCandles;
+import com.ulling.ullingcion.entites.Cryptowat.CryptowatSummary;
+import com.ulling.ullingcion.model.CryptoWatchModel;
+import com.ulling.ullingcion.view.adapter.CryptoDiffCallback;
 import com.ulling.ullingcion.view.adapter.CryptoWatchAdapter;
 import com.ulling.ullingcion.viewmodel.CryptoWatchViewModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
 /**
- *
  * View는 앱에서 유저 인터페이스의 실질적인 부분입니다. Activity , Fragment 안드로이드 View 도 이 View가 될 수 있습니다.
  * 이 View의 onResume() onPause() 에서 이벤트 소스를 바인딩, 언바인딩 하게됩니다.
  */
@@ -25,6 +43,10 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement implements Swip
     private FragmentCryptowatchBinding viewBinding;
     private CryptoWatchViewModel viewModel;
     private CryptoWatchAdapter adapter;
+    private SimpleDateFormat simpleDate;
+    private int cryptoTimeType = Define.VALUE_CRYPTOWAT_1W;
+    private boolean order = false;
+
 
     public static CryptoWatchFragment newInstance() {
         CryptoWatchFragment fragment = new CryptoWatchFragment();
@@ -35,19 +57,14 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement implements Swip
         return fragment;
     }
 
-
     @Override
     protected int needGetLayoutId() {
         return R.layout.fragment_cryptowatch;
     }
 
-
-    @Override
-    protected void needResetData() {
-    }
-
     @Override
     protected void needOnShowToUser() {
+        updateCryptoSummary();
     }
 
     @Override
@@ -56,18 +73,21 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement implements Swip
 
 
     @Override
+    protected void needResetData() {
+    }
+
+
+    @Override
     protected void needInitToOnCreate() {
         QcLog.e("needInitToOnCreate == ");
         qApp = QUllingApplication.getInstance();
         APP_NAME = QUllingApplication.getAppName();
-        if (viewModel == null) {
-            viewModel = ViewModelProviders.of(this).get(CryptoWatchViewModel.class);
-//            viewModel.needInitViewModel(getActivity(), this);
-//            viewModel.needDatabaseModel(DB_TYPE_LOCAL_ROOM, REMOTE_TYPE_RETROFIT, ApiUrl.BASE_CRYPTOWATCH_URL);
-        }
-//        adapter = new CryptoWatchAdapter(this, qcRecyclerItemListener);
-//        if (adapter != null)
-//            adapter.setViewModel(viewModel);
+//         diffCallback = new CryptoDiffCallback(this.itemList, mNewItemList);
+        adapter = new CryptoWatchAdapter(this, null);
+
+        simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+        simpleDate.setTimeZone(TimeZone.getTimeZone("GMT+9"));
+
     }
 
 
@@ -75,21 +95,91 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement implements Swip
     protected void needUIBinding() {
         QcLog.e("needUIBinding == ");
         viewBinding = (FragmentCryptowatchBinding) getViewBinding();
+        viewBinding.qcRecyclerView.setAdapter(adapter, viewBinding.tvEmpty);
     }
 
     @Override
     protected void needUIEventListener() {
-
+        viewBinding.btnGet.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                updateCryptoCandles();
+            }
+        });
+        viewBinding.btnOrder.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                if (adapter != null) {
+                    QcLog.e("btnOrder === " + order);
+                    adapter.addAll(sortByCloseTime(viewModel.getCandles().getValue(), order));
+                    order = !order;
+                }
+            }
+        });
     }
 
     @Override
     protected void needSubscribeUiFromViewModel() {
+        viewModel = ViewModelProviders.of(this).get(CryptoWatchViewModel.class);
+        viewModel.setViewModel(CryptoWatchModel.getInstance());
 
+        viewModel.getSummary().observe(this, new Observer<CryptowatSummary>() {
+            @Override
+            public void onChanged(@Nullable CryptowatSummary cryptowatSummary) {
+                QcLog.e("observe getSummary == " + cryptowatSummary.toString());
+
+                if (cryptowatSummary != null && cryptowatSummary.getResult() != null) {
+//                    Double ladtPrice = Double.parseDouble(cryptowatSummary.getResult().getPrice().getLast());
+                    viewBinding.tvLastPrice.setText("Last Price : " + cryptowatSummary.getResult().getPrice().getLast());
+                    viewBinding.tvHighPrice.setText("High Price : " + cryptowatSummary.getResult().getPrice().getHigh());
+                    viewBinding.tvLowPrice.setText("Low Price : " + cryptowatSummary.getResult().getPrice().getLow());
+                }
+            }
+        });
+
+        viewModel.getCandles().observe(this, new Observer<List<Candles>>() {
+            @Override
+            public void onChanged(@Nullable List<Candles> candles) {
+                QcLog.e("observe getCandles == " + candles.toString());
+                if (adapter != null) {
+                    adapter.addListDiffResult(sortByCloseTime(candles, order), new CryptoDiffCallback(adapter.itemList, candles));
+                }
+            }
+        });
+    }
+
+    public static List<Candles> sortByCloseTime(List<Candles> oldList, final boolean asc){
+        Collections.sort(oldList, new Comparator<Candles>() {
+            @Override
+            public int compare(Candles candles1, Candles candles2) {
+                if (asc) {
+                    return (int) (candles1.getCloseTime() - candles2.getCloseTime());
+                } else {
+                    return (int) (candles2.getCloseTime() - candles1.getCloseTime());
+                }
+            }
+        });
+        return oldList;
     }
 
     @Override
     protected void needSubscribeUiClear() {
 
+    }
+
+    private void updateCryptoSummary() {
+        if (viewModel != null) {
+            viewModel.loadSummary();
+        }
+    }
+
+    private void updateCryptoCandles() {
+        if (viewModel != null) {
+//            cryptoTimeType = Define.VALUE_CRYPTOWAT_1W;
+            Date after = QcUtil.GetDate(2017, 1, 1, 0, 0, 0);
+            viewModel.loadCandlesStick(QcUtil.GetUnixTime(after.getTime()), cryptoTimeType);
+
+        }
     }
 
 

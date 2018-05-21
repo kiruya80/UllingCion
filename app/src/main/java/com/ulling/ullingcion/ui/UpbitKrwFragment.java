@@ -68,6 +68,10 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
     }
 
     @Override
+    protected void needResetData() {
+    }
+
+    @Override
     protected void needInitToOnCreate() {
         QcLog.e("needInitToOnCreate == ");
         qApp = QUllingApplication.getInstance();
@@ -75,9 +79,6 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
         adapter = new UpbitKrwAdapter(this, null);
     }
 
-    @Override
-    protected void needResetData() {
-    }
 
     @Override
     protected void needUIBinding() {

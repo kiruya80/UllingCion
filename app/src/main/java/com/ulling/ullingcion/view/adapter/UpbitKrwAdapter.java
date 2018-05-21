@@ -20,9 +20,11 @@ import java.util.Locale;
 
 public class UpbitKrwAdapter extends QcRecyclerBaseAdapter<UpbitPriceResponse> {
     public static final int TYPE_ERROR = 998;
+    private final SimpleDateFormat simpleDate;
 
     public UpbitKrwAdapter(QcBaseLifeFragment qFragment, QcRecyclerItemListener qcRecyclerItemListener) {
         super(qFragment, qcRecyclerItemListener);
+        simpleDate = new SimpleDateFormat("MM-dd hh:mm:ss", Locale.KOREA);
     }
 
     @Override
@@ -65,7 +67,6 @@ public class UpbitKrwAdapter extends QcRecyclerBaseAdapter<UpbitPriceResponse> {
                 .into(hoderBinding.imgLogo);
 
         if (item.getTimestamp() > 0) {
-            SimpleDateFormat simpleDate = new SimpleDateFormat("MM-dd hh:mm:ss", Locale.KOREA);
             hoderBinding.tvTime.setText("Time : " + simpleDate.format(item.getTimestamp()));
         }
 

@@ -21,12 +21,12 @@ import java.util.List;
 
 /**
  * Created by P100651 on 2017-07-20.
- *
+ * <p>
  * https://github.com/googlesamples/android-architecture-components/blob/master/BasicSample/app/src/main/java/com/example/android/persistence/ui/ProductAdapter.java
- *
- *
+ * <p>
+ * <p>
  * 해결 및 최적화가 가능한지 체크 리스트
- *
+ * <p>
  * 1. 공통으로 사용할 수 있는 데이터 리스트? 2. 데이터 모델이 필요할까
  */
 public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBaseViewHolder> {
@@ -37,7 +37,7 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
 
     public Context qCon;
     public QcBaseLifeFragment qFragment;
-//    private AndroidViewModel viewModel;
+    //    private AndroidViewModel viewModel;
     public QcRecyclerItemListener qcRecyclerItemListener;
     /**
      * data set
@@ -214,7 +214,12 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
         notifyDataSetChanged();
     }
 
+
     public void addListDiffResult(final List<T> mNewItemList) {
+        addListDiffResult(mNewItemList, null);
+    }
+
+    public void addListDiffResult(final List<T> mNewItemList, DiffUtil.Callback mCallback) {
         if (itemList == null) {
 //            this.itemList = mNewItemList;
             this.itemList = new ArrayList<T>();
@@ -257,13 +262,25 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
 //                }
 //            });
 
+            if (mCallback != null) {
+                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(mCallback);
+                this.itemList.clear();
+                this.itemList.addAll(mNewItemList);
+                diffResult.dispatchUpdatesTo(this);
+            } else {
+                final QcDiffCallback diffCallback = new QcDiffCallback(this.itemList, mNewItemList);
+                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+                this.itemList.clear();
+                this.itemList.addAll(mNewItemList);
+                diffResult.dispatchUpdatesTo(this);
+            }
 
-            final QcDiffCallback diffCallback = new QcDiffCallback(this.itemList, mNewItemList);
-            final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-
-            this.itemList.clear();
-            this.itemList.addAll(mNewItemList);
-            diffResult.dispatchUpdatesTo(this);
+//            new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    diffResult.dispatchUpdatesTo(this);
+//                }
+//            });
         }
     }
 
@@ -273,10 +290,11 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
         }
         if (this.itemList != null) {
             QcLog.e("remove == ");
-             this.itemList.remove(item_);
+            this.itemList.remove(item_);
             notifyItemChanged(itemList.size(), 0);
         }
     }
+
     public void addProgress(T item_) {
         QcLog.e("addProgress =====");
         if (getItemCount() == 0) {
@@ -293,7 +311,7 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
             return false;
 
         QcLog.e("removeProgress == " + itemList.size());
-        for (int i=itemList.size()-1; i>=0; i--) {
+        for (int i = itemList.size() - 1; i >= 0; i--) {
             QcBaseItem mQcBaseItem = (QcBaseItem) itemList.get(i);
             if (mQcBaseItem.getType() == TYPE_LOAD_PROGRESS) {
                 itemList.remove(i);
@@ -314,7 +332,7 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
         if (getItemCount() == 0)
             return false;
 
-        for (int i=itemList.size()-1; i>=0; i--) {
+        for (int i = itemList.size() - 1; i >= 0; i--) {
             QcBaseItem mQcBaseItem = (QcBaseItem) itemList.get(i);
             if (mQcBaseItem.getType() == TYPE_LOAD_PROGRESS) {
                 return true;
@@ -330,7 +348,6 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
     }
 
     /**
-     *
      * @param item_
      */
     public void addLoadFail(T item_) {
@@ -349,7 +366,7 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
 
         QcLog.e("removeLoadFail == ");
 
-        for (int i=itemList.size()-1; i>=0; i--) {
+        for (int i = itemList.size() - 1; i >= 0; i--) {
             QcBaseItem mQcBaseItem = (QcBaseItem) itemList.get(i);
             if (mQcBaseItem.getType() == TYPE_LOAD_FAIL) {
                 itemList.remove(i);
@@ -370,7 +387,7 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
         if (getItemCount() == 0)
             return false;
 
-        for (int i=itemList.size()-1; i>=0; i--) {
+        for (int i = itemList.size() - 1; i >= 0; i--) {
             QcBaseItem mQcBaseItem = (QcBaseItem) itemList.get(i);
             if (mQcBaseItem.getType() == TYPE_LOAD_FAIL) {
                 return true;
@@ -471,6 +488,7 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
             }
         }
     }
+
     /**
      * @param position
      * @return

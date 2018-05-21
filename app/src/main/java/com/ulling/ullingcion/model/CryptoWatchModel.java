@@ -1,13 +1,20 @@
 package com.ulling.ullingcion.model;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.Nullable;
 
 import com.ulling.lib.core.util.QcLog;
+import com.ulling.ullingcion.common.Define;
+import com.ulling.ullingcion.entites.Cryptowat.Candles;
+import com.ulling.ullingcion.entites.Cryptowat.CandlesResult;
 import com.ulling.ullingcion.entites.Cryptowat.CryptoWatchCandles;
 import com.ulling.ullingcion.entites.Cryptowat.CryptowatSummary;
 import com.ulling.ullingcion.entites.UpbitPriceResponse;
 import com.ulling.ullingcion.network.RetrofitCryptowatService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -30,6 +37,7 @@ public class CryptoWatchModel {
 
     private MutableLiveData<CryptowatSummary> cryptowatSummary = null;
     private MutableLiveData<CryptoWatchCandles> cryptoWatchCandles = null;
+    private MutableLiveData<List<Candles>> candles = null;
 
     public CryptoWatchModel() {
         super();
@@ -55,13 +63,23 @@ public class CryptoWatchModel {
         return cryptowatSummary;
     }
 
-    public MutableLiveData<CryptoWatchCandles> getCandles() {
+    public MutableLiveData<CryptoWatchCandles> getCandlesStick() {
         if (cryptoWatchCandles == null) {
             cryptoWatchCandles = new MutableLiveData<CryptoWatchCandles>();
         } else {
             return cryptoWatchCandles;
         }
         return cryptoWatchCandles;
+    }
+
+
+    public MutableLiveData<List<Candles>> getCandles() {
+        if (candles == null) {
+            candles = new MutableLiveData<List<Candles>>();
+        } else {
+            return candles;
+        }
+        return candles;
     }
 
 
@@ -92,9 +110,9 @@ public class CryptoWatchModel {
         });
     }
 
-    public void loadCandlesStick(long after, int periods) {
+    public void loadCandlesStick(long after, final int periods) {
         QcLog.e("loadCandlesStick ===  " + periods + " , after = " + after);
-        Call<CryptoWatchCandles> call = RetrofitCryptowatService.getInstance().getCandlesStick( after, periods);
+        Call<CryptoWatchCandles> call = RetrofitCryptowatService.getInstance().getCandlesStick(after, periods);
         call.enqueue(new Callback<CryptoWatchCandles>() {
             @Override
             public void onResponse(Call<CryptoWatchCandles> call, Response<CryptoWatchCandles> response) {
@@ -104,6 +122,12 @@ public class CryptoWatchModel {
                     QcLog.e("onResponse === isSuccessful ");
                     CryptoWatchCandles result = response.body();
                     cryptoWatchCandles.postValue(result);
+
+                    if (result != null && result.getResult() != null) {
+                        getCandles(periods, result.getResult());
+                    } else {
+                        QcLog.e("getCandles result == null == ");
+                    }
                 } else {
                     QcLog.e("onResponse === false");
                     cryptoWatchCandles = new MutableLiveData<CryptoWatchCandles>();
@@ -118,5 +142,81 @@ public class CryptoWatchModel {
             }
         });
     }
+
+    public void getCandles(int periods, CandlesResult result) {
+        QcLog.e("getCandles == " + periods);
+
+        ArrayList<Candles> newCandles = new ArrayList<>();
+
+        if (periods == Define.VALUE_CRYPTOWAT_1M) {
+            newCandles = setCandles(result.getCandles_1M());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_3M) {
+            newCandles = setCandles(result.getCandles_3M());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_5M) {
+            newCandles = setCandles(result.getCandles_5M());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_15M) {
+            newCandles = setCandles(result.getCandles_15M());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_30M) {
+            newCandles = setCandles(result.getCandles_30M());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_1H) {
+            newCandles = setCandles(result.getCandles_1H());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_2H) {
+            newCandles = setCandles(result.getCandles_2H());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_4H) {
+            newCandles = setCandles(result.getCandles_4H());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_6H) {
+            newCandles = setCandles(result.getCandles_6H());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_12H) {
+            newCandles = setCandles(result.getCandles_12H());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_1D) {
+            newCandles = setCandles(result.getCandles_1D());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_3D) {
+            newCandles = setCandles(result.getCandles_3D());
+
+        } else if (periods == Define.VALUE_CRYPTOWAT_1W) {
+            newCandles = setCandles(result.getCandles_1W());
+        }
+
+        QcLog.e("getCandles postValue == " + periods);
+        candles.postValue(newCandles);
+    }
+
+    public ArrayList<Candles> setCandles(List<List<String>> candleList) {
+        ArrayList<Candles> newCandles = new ArrayList<>();
+        if (candleList == null)
+            return newCandles;
+
+        for (int i = 0; i < candleList.size(); i++) {
+            long closeTime = Long.parseLong(candleList.get(i).get(0)) * 1000;
+
+            Double OpenPrice = Double.parseDouble(candleList.get(i).get(1));
+            Double HighPrice = Double.parseDouble(candleList.get(i).get(2));
+            Double LowPrice = Double.parseDouble(candleList.get(i).get(3));
+            Double ClosePrice = Double.parseDouble(candleList.get(i).get(4));
+            Double Volume = Double.parseDouble(candleList.get(i).get(5));
+
+            Candles mCandles = new Candles();
+            mCandles.setCloseTime(closeTime);
+            mCandles.setOpenPrice(OpenPrice);
+            mCandles.setHighPrice(HighPrice);
+            mCandles.setLowPrice(LowPrice);
+            mCandles.setClosePrice(ClosePrice);
+            mCandles.setVolume(Volume);
+            newCandles.add(mCandles);
+        }
+        return newCandles;
+    }
+
 
 }
