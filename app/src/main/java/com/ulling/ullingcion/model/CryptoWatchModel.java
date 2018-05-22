@@ -3,6 +3,7 @@ package com.ulling.ullingcion.model;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 
 import com.ulling.lib.core.util.QcLog;
@@ -124,7 +125,8 @@ public class CryptoWatchModel {
                     cryptoWatchCandles.postValue(result);
 
                     if (result != null && result.getResult() != null) {
-                        getCandles(periods, result.getResult());
+//                        getCandles(periods, result.getResult());
+                        new GetCandlesTask(periods, result.getResult()).execute();
                     } else {
                         QcLog.e("getCandles result == null == ");
                     }
@@ -143,9 +145,32 @@ public class CryptoWatchModel {
         });
     }
 
-    public void getCandles(int periods, CandlesResult result) {
-        QcLog.e("getCandles == " + periods);
 
+    private class GetCandlesTask extends AsyncTask<Void, Void, Void> {
+        private int periods;
+        private CandlesResult result;
+        private ArrayList<Candles> newCandles = new ArrayList<>();
+
+        public GetCandlesTask(int periods, CandlesResult result) {
+            this.periods = periods;
+            this.result = result;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            newCandles = getCandles(periods, result);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            QcLog.e("getCandles postValue == " + periods);
+            candles.postValue(newCandles);
+        }
+    }
+
+    public ArrayList<Candles> getCandles(int periods, CandlesResult result) {
         ArrayList<Candles> newCandles = new ArrayList<>();
 
         if (periods == Define.VALUE_CRYPTOWAT_1M) {
@@ -187,9 +212,7 @@ public class CryptoWatchModel {
         } else if (periods == Define.VALUE_CRYPTOWAT_1W) {
             newCandles = setCandles(result.getCandles_1W());
         }
-
-        QcLog.e("getCandles postValue == " + periods);
-        candles.postValue(newCandles);
+        return newCandles;
     }
 
     public ArrayList<Candles> setCandles(List<List<String>> candleList) {
@@ -208,15 +231,30 @@ public class CryptoWatchModel {
 
             Candles mCandles = new Candles();
             mCandles.setCloseTime(closeTime);
-            mCandles.setOpenPrice(OpenPrice);
-            mCandles.setHighPrice(HighPrice);
-            mCandles.setLowPrice(LowPrice);
-            mCandles.setClosePrice(ClosePrice);
+            mCandles.setOpenPrice(getRound(OpenPrice, 1));
+            mCandles.setClosePrice(getRound(ClosePrice, 1));
+            mCandles.setHighPrice(getRound(HighPrice, 1));
+            mCandles.setLowPrice(getRound(LowPrice, 1));
             mCandles.setVolume(Volume);
             newCandles.add(mCandles);
         }
         return newCandles;
     }
 
+    private double getRound(double value, int number) {
+        if (number <= 0)
+            return value;
+
+        int intValue = (int) Math.ceil(value);
+        int length = (int) (Math.log10(intValue) + 1);
+        if (length <= number)
+            return value;
+
+        double roundNum = 1;
+        for (int i = 0; i < number; i++) {
+            roundNum = roundNum * 10d;
+        }
+        return Math.round(value / roundNum) * roundNum;
+    }
 
 }

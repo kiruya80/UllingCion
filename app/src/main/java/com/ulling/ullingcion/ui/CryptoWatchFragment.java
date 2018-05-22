@@ -148,7 +148,7 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement implements Swip
         });
     }
 
-    public static List<Candles> sortByCloseTime(List<Candles> oldList, final boolean asc){
+    public static List<Candles> sortByCloseTime(List<Candles> oldList, final boolean asc) {
         Collections.sort(oldList, new Comparator<Candles>() {
             @Override
             public int compare(Candles candles1, Candles candles2) {
