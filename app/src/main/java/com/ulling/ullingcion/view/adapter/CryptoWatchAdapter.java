@@ -33,58 +33,6 @@ public class CryptoWatchAdapter extends QcRecyclerBaseAdapter<Candles> {
     }
 
 
-//    public void addListDiffResult(final List<Candles> mNewItemList) {
-//        if (itemList == null) {
-//            this.itemList = new ArrayList<Candles>();
-//            this.itemList.clear();
-//            this.itemList.addAll(mNewItemList);
-//            notifyItemRangeInserted(0, itemList.size());
-//        } else {
-//            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
-//                @Override
-//                public int getOldListSize() {
-//                    return itemList.size();
-//                }
-//
-//                @Override
-//                public int getNewListSize() {
-//                    return itemList_.size();
-//                }
-//
-//                @Override
-//                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-////                    return itemList.get(oldItemPosition).getAnswerId() ==
-////                            itemList_.get(newItemPosition).getAnswerId();
-//                    return itemList.get(oldItemPosition).equals(
-//                            itemList_.get(newItemPosition));
-//                }
-//
-//                @Override
-//                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-//                    T newItem = itemList_.get(newItemPosition);
-//                    T oldItem = itemList.get(oldItemPosition);
-//
-//                    return oldItem.equals(newItem);
-//                }
-//
-//
-//                @Nullable
-//                @Override
-//                public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-//                    return super.getChangePayload(oldItemPosition, newItemPosition);
-//                }
-//            });
-//
-//
-//            final QcDiffCallback diffCallback = new QcDiffCallback(this.itemList, mNewItemList);
-//            final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-//
-//            this.itemList.clear();
-//            this.itemList.addAll(mNewItemList);
-//            diffResult.dispatchUpdatesTo(this);
-//        }
-//    }
-
     @Override
     protected void needInitToOnCreate() {
         itemList = new ArrayList<>();
@@ -131,7 +79,7 @@ public class CryptoWatchAdapter extends QcRecyclerBaseAdapter<Candles> {
             }
             Date date = new Date(item.getCloseTime());
             String formattedDate = simpleDate.format(date);
-            hoderBinding.tvTime.setText("" + formattedDate);
+            hoderBinding.tvTime.setText(position + "\n" + item.getCloseTime() + "\n\n" + formattedDate);
 
             hoderBinding.tvOpenPrice.setText("Oepn Price : " + item.getOpenPrice());
             hoderBinding.tvClosePrice.setText("Close Price : " + item.getClosePrice());

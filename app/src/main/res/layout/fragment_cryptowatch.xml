@@ -1,66 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.v4.widget.NestedScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:descendantFocusability="blocksDescendants">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="0px"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/p20"
-                android:layout_marginLeft="@dimen/p80"
-                android:layout_marginTop="@dimen/p20"
-                android:layout_weight="1"
-                android:gravity="center|left"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvLastPrice"
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/p20"
+                    android:layout_marginLeft="@dimen/p80"
+                    android:layout_marginTop="@dimen/p20"
+                    android:layout_weight="1"
+                    android:gravity="center|left"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvLastPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/tvHighPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/tvLowPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnGet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center" />
+                    android:text="Get Data" />
 
-                <TextView
-                    android:id="@+id/tvHighPrice"
+                <Button
+                    android:id="@+id/btnOrder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center" />
+                    android:text="Order" />
 
-                <TextView
-                    android:id="@+id/tvLowPrice"
+                <Button
+                    android:id="@+id/btnSupportLine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center" />
+                    android:text="Support" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btnGet"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tvSupportLine"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Get Data" />
-
-
-            <Button
-                android:id="@+id/btnOrder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Order" />
-
-        </LinearLayout>
-
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                android:gravity="center"
+                android:textSize="@dimen/p60" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -70,6 +80,7 @@
                     android:id="@+id/qcRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="false"
                     app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
                 <TextView
@@ -102,8 +113,8 @@
                     android:clickable="true"
                     android:visibility="gone" />
             </RelativeLayout>
-        </android.support.v4.widget.SwipeRefreshLayout>
 
 
-    </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </layout>

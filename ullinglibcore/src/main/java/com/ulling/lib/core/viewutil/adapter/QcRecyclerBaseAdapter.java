@@ -178,9 +178,10 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
      * TYPE_DEFAULT으로 설정
      */
     public void addAll(List<T> itemList_) {
-        if (null == itemList_ || itemList_.isEmpty()) {
-            return;
-        }
+//        if (null == itemList_ || itemList_.isEmpty()) {
+//            return;
+//        }
+
 //        for (T item : itemList) {
 //            if (item instanceof QcBaseItem) {
 //                QcBaseItem mQcBaseItem = (QcBaseItem) item;
@@ -189,7 +190,8 @@ public abstract class QcRecyclerBaseAdapter<T> extends RecyclerView.Adapter<QcBa
 //        }
 
         QcLog.e("add == " + itemList_.size());
-        this.itemList = itemList_;
+        this.itemList.clear();
+        this.itemList.addAll(itemList_);
 
         notifyDataSetChanged();
     }

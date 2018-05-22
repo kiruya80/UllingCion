@@ -1,21 +1,21 @@
 package com.ulling.ullingcion.model;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 
 import com.ulling.lib.core.util.QcLog;
 import com.ulling.ullingcion.common.Define;
 import com.ulling.ullingcion.entites.Cryptowat.Candles;
+import com.ulling.ullingcion.entites.Cryptowat.CandlesLine;
 import com.ulling.ullingcion.entites.Cryptowat.CandlesResult;
 import com.ulling.ullingcion.entites.Cryptowat.CryptoWatchCandles;
 import com.ulling.ullingcion.entites.Cryptowat.CryptowatSummary;
-import com.ulling.ullingcion.entites.UpbitPriceResponse;
 import com.ulling.ullingcion.network.RetrofitCryptowatService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -39,6 +39,7 @@ public class CryptoWatchModel {
     private MutableLiveData<CryptowatSummary> cryptowatSummary = null;
     private MutableLiveData<CryptoWatchCandles> cryptoWatchCandles = null;
     private MutableLiveData<List<Candles>> candles = null;
+    private MutableLiveData<List<CandlesLine>> candlesSupportLine = null;
 
     public CryptoWatchModel() {
         super();
@@ -53,6 +54,23 @@ public class CryptoWatchModel {
             }
         }
         return sInstance;
+    }
+
+    public MutableLiveData<List<CandlesLine>> getCandlesSupportLine() {
+        if (candlesSupportLine == null) {
+            candlesSupportLine = new MutableLiveData<List<CandlesLine>>();
+            List<CandlesLine> mCandlesAverage = new ArrayList<CandlesLine>();
+            candlesSupportLine.postValue(mCandlesAverage);
+        } else {
+            return candlesSupportLine;
+        }
+        return candlesSupportLine;
+    }
+
+    public void setCandlesSupportLine(int supportCount, double minPrice) {
+        if (candles != null) {
+            new GetCandlesLineTask(supportCount, minPrice).execute();
+        }
     }
 
     public MutableLiveData<CryptowatSummary> getSummary() {
@@ -73,7 +91,6 @@ public class CryptoWatchModel {
         return cryptoWatchCandles;
     }
 
-
     public MutableLiveData<List<Candles>> getCandles() {
         if (candles == null) {
             candles = new MutableLiveData<List<Candles>>();
@@ -83,15 +100,12 @@ public class CryptoWatchModel {
         return candles;
     }
 
-
     public void loadSummary() {
         QcLog.e("loadSummary ===  ");
         Call<CryptowatSummary> call = RetrofitCryptowatService.getInstance().getSummary();
         call.enqueue(new Callback<CryptowatSummary>() {
             @Override
             public void onResponse(Call<CryptowatSummary> call, Response<CryptowatSummary> response) {
-                QcLog.e("onResponse === " + response.toString());
-
                 if (response.isSuccessful()) {
                     QcLog.e("onResponse === isSuccessful ");
                     CryptowatSummary result = response.body();
@@ -105,7 +119,6 @@ public class CryptoWatchModel {
             @Override
             public void onFailure(Call<CryptowatSummary> call, Throwable t) {
                 QcLog.e("onFailure error loading from API == " + t.toString() + " , " + t.getMessage());
-
                 cryptowatSummary = new MutableLiveData<CryptowatSummary>();
             }
         });
@@ -117,15 +130,12 @@ public class CryptoWatchModel {
         call.enqueue(new Callback<CryptoWatchCandles>() {
             @Override
             public void onResponse(Call<CryptoWatchCandles> call, Response<CryptoWatchCandles> response) {
-                QcLog.e("onResponse === " + response.toString());
-
                 if (response.isSuccessful()) {
                     QcLog.e("onResponse === isSuccessful ");
                     CryptoWatchCandles result = response.body();
                     cryptoWatchCandles.postValue(result);
 
                     if (result != null && result.getResult() != null) {
-//                        getCandles(periods, result.getResult());
                         new GetCandlesTask(periods, result.getResult()).execute();
                     } else {
                         QcLog.e("getCandles result == null == ");
@@ -145,32 +155,59 @@ public class CryptoWatchModel {
         });
     }
 
-
     private class GetCandlesTask extends AsyncTask<Void, Void, Void> {
         private int periods;
         private CandlesResult result;
         private ArrayList<Candles> newCandles = new ArrayList<>();
+        private ArrayList<CandlesLine> newCandlesSupportLine = new ArrayList<>();
 
         public GetCandlesTask(int periods, CandlesResult result) {
             this.periods = periods;
             this.result = result;
+
+            newCandles = new ArrayList<>();
+            newCandlesSupportLine = new ArrayList<>();
+//            priceTotal = new ArrayList<Double>();
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            newCandles = getCandles(periods, result);
+            QcLog.e("GetCandlesTask === doInBackground ");
+            newCandles = sortByCloseTime(getCandles(periods, result), false);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            QcLog.e("getCandles postValue == " + periods);
+            QcLog.e("GetCandlesTask === onPostExecute ");
             candles.postValue(newCandles);
         }
     }
 
+    public static ArrayList<Candles> sortByCloseTime(ArrayList<Candles> oldList, final boolean asc) {
+        if (oldList != null)
+            Collections.sort(oldList, new Comparator<Candles>() {
+                @Override
+                public int compare(Candles candles1, Candles candles2) {
+                    BigDecimal bd1 = new BigDecimal(String.valueOf(candles1.getCloseTime() / 10000));
+                    BigDecimal bd2 = new BigDecimal(String.valueOf(candles2.getCloseTime() / 10000));
+                    if (asc) {
+//                    return (int) (candles1.getCloseTime() - candles2.getCloseTime());
+                        BigDecimal mBigDecimal = bd1.subtract(bd2);
+                        return mBigDecimal.intValue();
+                    } else {
+//                    return (int) (candles2.getCloseTime() - candles1.getCloseTime());
+                        BigDecimal mBigDecimal = bd2.subtract(bd1);
+                        return mBigDecimal.intValue();
+                    }
+                }
+            });
+        return oldList;
+    }
+
     public ArrayList<Candles> getCandles(int periods, CandlesResult result) {
+        QcLog.e("GetCandlesTask === getCandles ");
         ArrayList<Candles> newCandles = new ArrayList<>();
 
         if (periods == Define.VALUE_CRYPTOWAT_1M) {
@@ -216,6 +253,7 @@ public class CryptoWatchModel {
     }
 
     public ArrayList<Candles> setCandles(List<List<String>> candleList) {
+        QcLog.e("GetCandlesTask === setCandles ");
         ArrayList<Candles> newCandles = new ArrayList<>();
         if (candleList == null)
             return newCandles;
@@ -257,4 +295,125 @@ public class CryptoWatchModel {
         return Math.round(value / roundNum) * roundNum;
     }
 
+
+    private class GetCandlesLineTask extends AsyncTask<Void, Void, Void> {
+        private List<Candles> mCandles = new ArrayList<>();
+        private ArrayList<Double> priceTotal;
+        private ArrayList<CandlesLine> newCandlesSupportLine;
+        private int supportCount = 2;
+        private double minPrice = 4000;
+
+        public GetCandlesLineTask(int supportCount, double minPrice) {
+            this.supportCount = supportCount;
+            this.minPrice = minPrice;
+            this.priceTotal = new ArrayList<Double>();
+            this.newCandlesSupportLine = new ArrayList<>();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            QcLog.e("GetCandlesTask === doInBackground ");
+
+            mCandles = candles.getValue();
+
+            for (int i = 0; i < mCandles.size(); i++) {
+                // 지지선 구하기
+                if (mCandles.get(i).getOpenPrice() > mCandles.get(i).getClosePrice()) {
+                    // 음봉
+                    if (mCandles.get(i).getClosePrice() > 0)
+                        priceTotal.add(mCandles.get(i).getClosePrice());
+                    if (mCandles.get(i).getLowPrice() > 0)
+                        priceTotal.add(mCandles.get(i).getLowPrice());
+                } else {
+                    if (mCandles.get(i).getOpenPrice() > 0)
+                        priceTotal.add(mCandles.get(i).getOpenPrice());
+                    if (mCandles.get(i).getLowPrice() > 0)
+                        priceTotal.add(mCandles.get(i).getLowPrice());
+                }
+
+                // 저항선 구하기
+//            if (mCandles.getOpenPrice() > mCandles.getClosePrice()) {
+//                // 음봉
+//                if (mCandles.getOpenPrice() > 0)
+//                    priceTotal.add(mCandles.getOpenPrice());
+//                if (mCandles.getHighPrice() > 0)
+//                    priceTotal.add(mCandles.getHighPrice());
+//            } else {
+//                if (mCandles.getClosePrice() > 0)
+//                    priceTotal.add(mCandles.getClosePrice());
+//                if (mCandles.getHighPrice() > 0)
+//                    priceTotal.add(mCandles.getHighPrice());
+//            }
+
+                // 전체
+//            if (mCandles.getOpenPrice() > 0)
+//                priceTotal.add(mCandles.getOpenPrice());
+//            if (mCandles.getClosePrice() > 0)
+//                priceTotal.add(mCandles.getClosePrice());
+//            if (mCandles.getHighPrice() > 0)
+//                priceTotal.add(mCandles.getHighPrice());
+//            if (mCandles.getLowPrice() > 0)
+//                priceTotal.add(mCandles.getLowPrice());
+
+            }
+
+
+            if (priceTotal.size() > 2)
+                newCandlesSupportLine = getPriceStatistic(priceTotal, supportCount, minPrice);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            QcLog.e("GetCandlesTask === onPostExecute ");
+            if (priceTotal.size() > 2)
+                candlesSupportLine.postValue(newCandlesSupportLine);
+        }
+    }
+
+    public ArrayList<CandlesLine> getPriceStatistic(ArrayList<Double> priceTotal, int supportCount, double minPrice) {
+        QcLog.e("GetCandlesTask === getPriceStatistic ");
+        ArrayList<CandlesLine> mCandlesAverageList = new ArrayList<>();
+        List<Double> priceTotal_ = sortByPrice(priceTotal);
+        int count = 1;
+
+        for (int i = 0; i < priceTotal_.size(); i++) {
+            if (i > 0) {
+                CandlesLine mCandlesAverage = new CandlesLine();
+                if (Double.compare(priceTotal_.get(i), priceTotal_.get(i - 1)) == 1) {
+                    // 다른경우
+                    // 달라진 경우만 이전 가격과 증감을 넣는다
+                    if (count > supportCount && priceTotal_.get(i - 1) > minPrice) {
+                        mCandlesAverage.setPrice(priceTotal_.get(i - 1));
+                        mCandlesAverage.setCount(count);
+                        mCandlesAverageList.add(mCandlesAverage);
+                    }
+                    count = 1;
+
+                } else {
+                    // 같은 경우
+                    count++;
+                }
+            }
+        }
+        return mCandlesAverageList;
+    }
+
+    public List<Double> sortByPrice(List<Double> oldList) {
+        QcLog.e("GetCandlesTask === sortByPrice ");
+        Collections.sort(oldList, new Comparator<Double>() {
+            @Override
+            public int compare(Double price1, Double price2) {
+//                return (int) (price1 - price2);
+
+                BigDecimal bd1 = new BigDecimal(String.valueOf(price1));
+                BigDecimal bd2 = new BigDecimal(String.valueOf(price2));
+                BigDecimal mBigDecimal = bd1.subtract(bd2);
+                return mBigDecimal.intValue();
+            }
+        });
+        return oldList;
+    }
 }
