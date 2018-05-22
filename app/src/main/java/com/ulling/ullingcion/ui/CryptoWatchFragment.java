@@ -44,7 +44,7 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
     private CryptoWatchViewModel viewModel;
     private CryptoWatchAdapter adapter;
     private SimpleDateFormat simpleDate;
-    private int cryptoTimeType = Define.VALUE_CRYPTOWAT_12H;
+    private int cryptoTimeType = Define.VALUE_CRYPTOWAT_4H;
     private boolean order = false;
     public CryptowatSummary cryptowatSummary;
 
@@ -121,9 +121,10 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
             @Override
             public void onSingleClick(View v) {
                 if (viewModel != null)
-                    viewModel.setCandlesSupportLine(3, 4000);
+                    viewModel.setCandlesSupportLine(Integer.parseInt(viewBinding.editSupport.getText().toString()), 4000);
             }
         });
+        viewBinding.editSupport.setText("" + 5);
     }
 
     @Override
@@ -153,7 +154,11 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
                 QcLog.e("observe getCandles == " + candles.size());
                 if (adapter != null) {
 //                    adapter.addListDiffResult(sortByCloseTime(candles, order), new CryptoDiffCallback(adapter.itemList, candles));
-                    adapter.addListDiffResult(candles, new CryptoDiffCallback(adapter.itemList, candles));
+                    List<Candles> candles_ = new ArrayList<>();
+                    candles_.addAll(candles.subList(0, 50));
+                    adapter.addListDiffResult(candles_, new CryptoDiffCallback(adapter.itemList, candles));
+
+//                    adapter.addListDiffResult(candles, new CryptoDiffCallback(adapter.itemList, candles));
                 }
             }
         });
@@ -173,8 +178,8 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
                             break;
                         }
                     }
-                    int fromIndex = index - 3;
-                    int toIndex = index + 3;
+                    int fromIndex = index - 4;
+                    int toIndex = index + 4;
                     if (fromIndex < 0) {
                         fromIndex = 0;
                     }

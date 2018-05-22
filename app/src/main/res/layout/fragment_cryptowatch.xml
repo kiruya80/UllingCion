@@ -15,16 +15,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="0px"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/p20"
-                    android:layout_marginLeft="@dimen/p80"
-                    android:layout_marginTop="@dimen/p20"
-                    android:layout_weight="1"
-                    android:gravity="center|left"
+                    android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
@@ -46,23 +42,37 @@
                         android:gravity="center" />
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/btnGet"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Get Data" />
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/btnOrder"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Order" />
+                    <Button
+                        android:id="@+id/btnGet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Get Data" />
 
-                <Button
-                    android:id="@+id/btnSupportLine"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Support" />
+                    <Button
+                        android:id="@+id/btnOrder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Order" />
+
+                    <EditText
+                        android:id="@+id/editSupport"
+                        android:layout_width="@dimen/p300"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:inputType="number" />
+
+                    <Button
+                        android:id="@+id/btnSupportLine"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Support" />
+                </LinearLayout>
             </LinearLayout>
 
             <TextView
