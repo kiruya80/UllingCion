@@ -14,77 +14,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/p20"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/btnGet"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:text="Get Data" />
 
-                    <TextView
-                        android:id="@+id/tvLastPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:id="@+id/tvHighPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:id="@+id/tvLowPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/btnOrder"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/btnGet"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Get Data" />
-
-                    <Button
-                        android:id="@+id/btnOrder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Order" />
-
-                    <EditText
-                        android:id="@+id/editSupport"
-                        android:layout_width="@dimen/p300"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:inputType="number" />
-
-                    <Button
-                        android:id="@+id/btnSupportLine"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Support" />
-                </LinearLayout>
+                    android:text="Order" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvSupportLine"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="@dimen/p60" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/p20">
 
                 <com.ulling.ullingcion.view.CoinRecyclerview
                     android:id="@+id/qcRecyclerView"

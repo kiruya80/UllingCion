@@ -16,22 +16,24 @@ import com.ulling.ullingcion.R;
 import com.ulling.ullingcion.common.Define;
 import com.ulling.ullingcion.databinding.FragmentCryptowatchBinding;
 import com.ulling.ullingcion.entites.Cryptowat.Candles;
-import com.ulling.ullingcion.entites.Cryptowat.CandlesLine;
-import com.ulling.ullingcion.entites.Cryptowat.CryptowatSummary;
 import com.ulling.ullingcion.model.CryptoWatchModel;
 import com.ulling.ullingcion.view.adapter.CryptoDiffCallback;
 import com.ulling.ullingcion.view.adapter.CryptoWatchAdapter;
 import com.ulling.ullingcion.viewmodel.CryptoWatchViewModel;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
+import java.util.Map;
+
 
 /**
  * View는 앱에서 유저 인터페이스의 실질적인 부분입니다. Activity , Fragment 안드로이드 View 도 이 View가 될 수 있습니다.
@@ -46,7 +48,6 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
     private SimpleDateFormat simpleDate;
     private int cryptoTimeType = Define.VALUE_CRYPTOWAT_4H;
     private boolean order = false;
-    public CryptowatSummary cryptowatSummary;
 
 
     public static CryptoWatchFragment newInstance() {
@@ -65,7 +66,6 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needOnShowToUser() {
-        updateCryptoSummary();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
         adapter = new CryptoWatchAdapter(this, null);
 
         simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
-        simpleDate.setTimeZone(TimeZone.getTimeZone("GMT+9"));
+//        simpleDate.setTimeZone(TimeZone.getTimeZone("GMT+9"));
 
     }
 
@@ -117,36 +117,12 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
                 }
             }
         });
-        viewBinding.btnSupportLine.setOnClickListener(new OnSingleClickListener() {
-            @Override
-            public void onSingleClick(View v) {
-                if (viewModel != null)
-                    viewModel.setCandlesSupportLine(Integer.parseInt(viewBinding.editSupport.getText().toString()), 4000);
-            }
-        });
-        viewBinding.editSupport.setText("" + 5);
     }
 
     @Override
     protected void needSubscribeUiFromViewModel() {
         viewModel = ViewModelProviders.of(this).get(CryptoWatchViewModel.class);
         viewModel.setViewModel(CryptoWatchModel.getInstance());
-
-        viewModel.getSummary().observe(this, new Observer<CryptowatSummary>() {
-
-            @Override
-            public void onChanged(@Nullable CryptowatSummary cryptowatSummary_) {
-                QcLog.e("observe getSummary == " + cryptowatSummary_.toString());
-                cryptowatSummary = cryptowatSummary_;
-
-                if (cryptowatSummary != null && cryptowatSummary.getResult() != null) {
-//                    Double ladtPrice = Double.parseDouble(cryptowatSummary.getResult().getPrice().getLast());
-                    viewBinding.tvLastPrice.setText("Last Price : " + cryptowatSummary.getResult().getPrice().getLast());
-                    viewBinding.tvHighPrice.setText("High Price : " + cryptowatSummary.getResult().getPrice().getHigh());
-                    viewBinding.tvLowPrice.setText("Low Price : " + cryptowatSummary.getResult().getPrice().getLow());
-                }
-            }
-        });
 
         viewModel.getCandles().observe(this, new Observer<List<Candles>>() {
             @Override
@@ -157,37 +133,6 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
                     List<Candles> candles_ = new ArrayList<>();
                     candles_.addAll(candles.subList(0, 50));
                     adapter.addListDiffResult(candles_, new CryptoDiffCallback(adapter.itemList, candles));
-
-//                    adapter.addListDiffResult(candles, new CryptoDiffCallback(adapter.itemList, candles));
-                }
-            }
-        });
-        viewModel.getCandlesSupportLine().observe(this, new Observer<List<CandlesLine>>() {
-            @Override
-            public void onChanged(@Nullable List<CandlesLine> candlesAverages) {
-                if (cryptowatSummary != null && candlesAverages != null) {
-                    int index = 0;
-                    for (int i = 0; i < candlesAverages.size(); i++) {
-                        BigDecimal bd1 = new BigDecimal(String.valueOf(cryptowatSummary.getResult().getPrice().getLast()));
-                        BigDecimal bd2 = new BigDecimal(String.valueOf(candlesAverages.get(i).getPrice()));
-
-                        BigDecimal mBigDecimal = bd1.subtract(bd2);
-                        if (mBigDecimal.intValue() < 0) {
-                            // 마지막 시세가격보다 커지는 시점
-                            index = i;
-                            break;
-                        }
-                    }
-                    int fromIndex = index - 4;
-                    int toIndex = index + 4;
-                    if (fromIndex < 0) {
-                        fromIndex = 0;
-                    }
-                    if (toIndex > candlesAverages.size()) {
-                        toIndex = candlesAverages.size();
-                    }
-                    List<CandlesLine> newCandles = candlesAverages.subList(fromIndex, toIndex);
-                    viewBinding.tvSupportLine.setText("" + newCandles.toString());
                 }
             }
         });
@@ -229,13 +174,6 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needSubscribeUiClear() {
-
-    }
-
-    private void updateCryptoSummary() {
-        if (viewModel != null) {
-            viewModel.loadSummary();
-        }
     }
 
     private void updateCryptoCandles() {
@@ -274,4 +212,5 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
 
         }
     };
+
 }

@@ -24,12 +24,16 @@ android {
         javaMaxHeapSize "4g"
 //    javaMaxHeapSize "2048M"
     }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
 }
 
 dependencies {
     implementation project(':ullinglibcore')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:appcompat-v7:27.1.0'
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
@@ -61,4 +65,9 @@ dependencies {
      */
     implementation 'com.google.code.gson:gson:2.8.3'
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    /**
+     * JodaTime
+     */
+    implementation 'joda-time:joda-time:2.9.9'
 }

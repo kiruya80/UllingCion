@@ -73,12 +73,14 @@ public class MainActivity extends QcBaseLifeActivity {
 
 
     private void setFragment() {
-        BaseQLifecycleFragmentList.add(UpbitKrwFragment.newInstance());
+        BaseQLifecycleFragmentList.add(HomeFragment.newInstance());
         BaseQLifecycleFragmentList.add(CryptoWatchFragment.newInstance());
+        BaseQLifecycleFragmentList.add(CryptoSummaryFragment.newInstance());
+        BaseQLifecycleFragmentList.add(UpbitKrwFragment.newInstance());
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        private String tabTitles[] = new String[]{"원화마켓", "Cryptowatch" };
+        private String tabTitles[] = new String[]{"홈", "비트코인", "요약", "원화마켓"};
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);

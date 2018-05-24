@@ -1,20 +1,45 @@
 package com.ulling.ullingcion.entites.Cryptowat;
 
-public class Price {
-    private String last;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
+public class Price {
+
+    @SerializedName("last")
+    @Expose
+    private double last;
+    @SerializedName("high")
+    @Expose
+    private double high;
+    @SerializedName("low")
+    @Expose
+    private double low;
+    @SerializedName("change")
+    @Expose
     private Change change;
 
-    private String high;
-
-    private String low;
-
-    public String getLast() {
+    public double getLast() {
         return last;
     }
 
-    public void setLast(String last) {
+    public void setLast(double last) {
         this.last = last;
+    }
+
+    public double getHigh() {
+        return high;
+    }
+
+    public void setHigh(double high) {
+        this.high = high;
+    }
+
+    public double getLow() {
+        return low;
+    }
+
+    public void setLow(double low) {
+        this.low = low;
     }
 
     public Change getChange() {
@@ -25,27 +50,14 @@ public class Price {
         this.change = change;
     }
 
-    public String getHigh() {
-        return high;
-    }
-
-    public void setHigh(String high) {
-        this.high = high;
-    }
-
-    public String getLow() {
-        return low;
-    }
-
-    public void setLow(String low) {
-        this.low = low;
-    }
-
     @Override
     public String toString() {
-        return "last= " + last +
-                "\nhigh= " + high +
-                "\nlow= " + low;
+        return "Price{" +
+                "last=" + last +
+                ", high=" + high +
+                ", low=" + low +
+                ", change=" + change +
+                '}';
     }
 }
 

@@ -1,9 +1,13 @@
 package com.ulling.lib.core.util;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class QcUtil {
+
+    private static DecimalFormat df = new DecimalFormat("###,###.##");
 
     public static Date GetDate(int year, int month, int date, int hour, int minute, int second) {
         Calendar cal = Calendar.getInstance();
@@ -30,5 +34,15 @@ public class QcUtil {
 //        SmsManager sms = SmsManager.getDefault();
 //        sms.sendTextMessage(phoneNumber, null, message, null, null);
 //    }
+
+
+    public static BigDecimal formatBigDecimal(double value) {
+        try {
+            return new BigDecimal(df.format(value));
+        } catch (Exception e) {
+            return new BigDecimal(0);
+        }
+    }
+
 
 }

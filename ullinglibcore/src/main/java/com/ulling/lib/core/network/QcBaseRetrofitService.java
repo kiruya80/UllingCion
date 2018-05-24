@@ -46,26 +46,26 @@ public class QcBaseRetrofitService {
 //    }
 
     protected static OkHttpClient.Builder enableTlsOnPreLollipop(OkHttpClient.Builder builder) {
-        if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 22) {
-            try {
-                SSLContext sc = SSLContext.getInstance("TLSv1.2");
-                sc.init(null, null, null);
-                builder.sslSocketFactory(new TLSSocketFactory(sc.getSocketFactory()));
-
-                ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                        .tlsVersions(TlsVersion.TLS_1_2)
-                        .build();
-
-                List<ConnectionSpec> specs = new ArrayList<>();
-                specs.add(cs);
-                specs.add(ConnectionSpec.COMPATIBLE_TLS);
-                specs.add(ConnectionSpec.CLEARTEXT);
-
-                builder.connectionSpecs(specs);
-            } catch (Exception exc) {
-                QcLog.e("Error while setting TLS 1.2" + exc);
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 22) {
+//            try {
+//                SSLContext sc = SSLContext.getInstance("TLSv1.2");
+//                sc.init(null, null, null);
+//                builder.sslSocketFactory(new TLSSocketFactory(sc.getSocketFactory()));
+//
+//                ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+//                        .tlsVersions(TlsVersion.TLS_1_2)
+//                        .build();
+//
+//                List<ConnectionSpec> specs = new ArrayList<>();
+//                specs.add(cs);
+//                specs.add(ConnectionSpec.COMPATIBLE_TLS);
+//                specs.add(ConnectionSpec.CLEARTEXT);
+//
+//                builder.connectionSpecs(specs);
+//            } catch (Exception exc) {
+//                QcLog.e("Error while setting TLS 1.2" + exc);
+//            }
+//        }
 
         return builder;
     }

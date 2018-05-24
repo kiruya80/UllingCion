@@ -25,6 +25,10 @@
         </activity>
 
         <service
+            android:name=".service.MainService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
             android:name=".service.UpbitService"
             android:enabled="true"
             android:exported="true"></service>

@@ -7,24 +7,25 @@ public class Allowance {
 
     @SerializedName("cost")
     @Expose
-    private long cost;
+    private double cost;
+
     @SerializedName("remaining")
     @Expose
-    private long remaining;
+    private double remaining;
 
-    public long getCost() {
+    public double getCost() {
         return cost;
     }
 
-    public void setCost(long cost) {
+    public void setCost(int cost) {
         this.cost = cost;
     }
 
-    public long getRemaining() {
+    public double getRemaining() {
         return remaining;
     }
 
-    public void setRemaining(long remaining) {
+    public void setRemaining(int remaining) {
         this.remaining = remaining;
     }
 

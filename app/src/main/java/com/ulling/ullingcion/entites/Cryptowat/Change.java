@@ -1,29 +1,39 @@
 package com.ulling.ullingcion.entites.Cryptowat;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Change {
-    private String absolute;
 
-    private String percentage;
 
-    public String getAbsolute() {
-        return absolute;
-    }
+    @SerializedName("percentage")
+    @Expose
+    private double percentage;
+    @SerializedName("absolute")
+    @Expose
+    private double absolute;
 
-    public void setAbsolute(String absolute) {
-        this.absolute = absolute;
-    }
-
-    public String getPercentage() {
+    public double getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(String percentage) {
+    public void setPercentage(double percentage) {
         this.percentage = percentage;
+    }
+
+    public double getAbsolute() {
+        return absolute;
+    }
+
+    public void setAbsolute(double absolute) {
+        this.absolute = absolute;
     }
 
     @Override
     public String toString() {
-        return "\nabsolute= " + absolute +
-                "\npercentage= " + percentage + "\n";
+        return "Change{" +
+                "percentage=" + percentage +
+                ", absolute=" + absolute +
+                '}';
     }
 }

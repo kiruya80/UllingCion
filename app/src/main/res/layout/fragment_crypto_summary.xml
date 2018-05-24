@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v4.widget.NestedScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/p300"
+                    android:gravity="center|left">
+
+                    <LinearLayout
+                        android:id="@+id/llCandle"
+                        android:layout_width="@dimen/p500"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/p50"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="@dimen/p10"
+                            android:gravity="center"
+                            android:textColor="@color/color_white" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvLastPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/p50"
+                        android:layout_marginTop="@dimen/p20"
+                        android:layout_toRightOf="@+id/llCandle"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/tvHighPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvLastPrice"
+                        android:layout_marginLeft="@dimen/p50"
+                        android:layout_marginTop="@dimen/p20"
+                        android:layout_toRightOf="@+id/llCandle"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/tvLowPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvHighPrice"
+                        android:layout_marginLeft="@dimen/p50"
+                        android:layout_marginTop="@dimen/p20"
+                        android:layout_toRightOf="@+id/llCandle"
+                        android:gravity="center" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/editSupport"
+                    android:layout_width="@dimen/p300"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:inputType="number" />
+
+                <Button
+                    android:id="@+id/btnSupportLine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Support" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/p20">
+
+                <com.ulling.ullingcion.view.CoinRecyclerview
+                    android:id="@+id/qcRecyclerViewLow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="@dimen/p60" />
+
+                <com.ulling.ullingcion.view.CoinRecyclerview
+                    android:id="@+id/qcRecyclerViewHigh"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+            </RelativeLayout>
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</layout>

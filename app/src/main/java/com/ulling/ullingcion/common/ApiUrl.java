@@ -34,4 +34,7 @@ public class ApiUrl extends QcApiURL {
 
     //  https://api.cryptowat.ch/markets/bitfinex/btcusd/summary
     public static final String BASE_CRYPTOWAT_URL = "https://api.cryptowat.ch/";
+
+    // https://quotation-api-cdn.dunamu.com/v1/forex/recent?codes=FRX.KRWUSD
+    public static final String BASE_USD_TO_KRW_URL = "https://quotation-api-cdn.dunamu.com/";
 }

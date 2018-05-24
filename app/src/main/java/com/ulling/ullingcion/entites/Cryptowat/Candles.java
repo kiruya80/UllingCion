@@ -2,6 +2,9 @@ package com.ulling.ullingcion.entites.Cryptowat;
 
 import com.ulling.lib.core.entities.QcBaseItem;
 
+
+import java.math.BigDecimal;
+
 public class Candles extends QcBaseItem {
     private long closeTime;
     private double openPrice;
@@ -9,6 +12,20 @@ public class Candles extends QcBaseItem {
     private double lowPrice;
     private double closePrice;
     private double volume;
+
+    public Candles() {
+
+    }
+
+    public Candles(long closeTime, double openPrice, double highPrice, double lowPrice, double closePrice, double volume) {
+        super();
+        this.closeTime = closeTime;
+        this.openPrice = openPrice;
+        this.highPrice = highPrice;
+        this.lowPrice = lowPrice;
+        this.closePrice = closePrice;
+        this.volume = volume;
+    }
 
     public long getCloseTime() {
         return closeTime;

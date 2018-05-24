@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 import com.ulling.lib.core.util.QcLog;
+import com.ulling.lib.core.util.QcUtil;
 import com.ulling.ullingcion.common.Define;
 import com.ulling.ullingcion.entites.Cryptowat.Candles;
 import com.ulling.ullingcion.entites.Cryptowat.CandlesLine;
@@ -267,13 +268,21 @@ public class CryptoWatchModel {
             Double ClosePrice = Double.parseDouble(candleList.get(i).get(4));
             Double Volume = Double.parseDouble(candleList.get(i).get(5));
 
-            Candles mCandles = new Candles();
-            mCandles.setCloseTime(closeTime);
-            mCandles.setOpenPrice(getRound(OpenPrice, 1));
-            mCandles.setClosePrice(getRound(ClosePrice, 1));
-            mCandles.setHighPrice(getRound(HighPrice, 1));
-            mCandles.setLowPrice(getRound(LowPrice, 1));
-            mCandles.setVolume(Volume);
+
+            Candles mCandles = new Candles(closeTime ,
+                    getRound(OpenPrice, 1),
+                    getRound(HighPrice, 1),
+                    getRound(LowPrice, 1),
+                    getRound(ClosePrice, 1),
+                    Volume);
+
+//            Candles mCandles = new Candles();
+//            mCandles.setCloseTime(closeTime);
+//            mCandles.setOpenPrice(getRound(OpenPrice, 1));
+//            mCandles.setClosePrice(getRound(ClosePrice, 1));
+//            mCandles.setHighPrice(getRound(HighPrice, 1));
+//            mCandles.setLowPrice(getRound(LowPrice, 1));
+//            mCandles.setVolume(Volume);
             newCandles.add(mCandles);
         }
         return newCandles;
@@ -315,6 +324,8 @@ public class CryptoWatchModel {
             QcLog.e("GetCandlesTask === doInBackground ");
 
             mCandles = candles.getValue();
+            if (mCandles == null)
+                return null;
 
             for (int i = 0; i < mCandles.size(); i++) {
                 // 지지선 구하기

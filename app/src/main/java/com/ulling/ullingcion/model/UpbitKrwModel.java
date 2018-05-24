@@ -4,16 +4,12 @@ import android.arch.lifecycle.MutableLiveData;
 
 import com.ulling.lib.core.network.QcBaseRetrofitService;
 import com.ulling.lib.core.util.QcLog;
-import com.ulling.lib.core.viewutil.adapter.QcRecyclerBaseAdapter;
 import com.ulling.ullingcion.common.ApiUrl;
-import com.ulling.ullingcion.entites.Status;
 import com.ulling.ullingcion.entites.UpbitErrorResponse;
 import com.ulling.ullingcion.entites.UpbitPriceResponse;
 import com.ulling.ullingcion.network.RetrofitUpbitService;
-import com.ulling.ullingcion.view.adapter.UpbitKrwAdapter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;

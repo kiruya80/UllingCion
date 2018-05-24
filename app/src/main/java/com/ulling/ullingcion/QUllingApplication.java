@@ -6,12 +6,15 @@ import android.arch.lifecycle.LiveData;
 import android.content.Context;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Intent;
 
 import com.ulling.lib.core.base.QcBaseApplication;
 import com.ulling.lib.core.util.QcLog;
 import com.ulling.lib.core.util.QcPreferences;
 import com.ulling.lib.core.util.QcToast;
 import com.ulling.ullingcion.db.UpbitRoomDatabase;
+import com.ulling.ullingcion.service.MainService;
+import com.ulling.ullingcion.service.UpbitService;
 
 /**
  * Created by KILHO on 2016. 7. 4..
@@ -21,6 +24,13 @@ public class QUllingApplication extends QcBaseApplication {
     public static Context qCon;
     private MutableLiveData<Boolean> isUpbitService = null;
 //    public static QcPreferences appQcPreferences;
+
+    private final String SERVICE_NAME_MAIN = "MainService";
+    private final String SERVICE_NAME_UPBIT = "UpbitService";
+
+    public static synchronized QUllingApplication getInstance() {
+        return SINGLE_U;
+    }
 
     @Override
     public void onCreate() {
@@ -45,12 +55,29 @@ public class QUllingApplication extends QcBaseApplication {
         APP_NAME = qCon.getResources().getString(R.string.app_name);
         QcPreferences.getInstance().getAPP_NAME();
         QcToast.getInstance().show("Start App : " + QcPreferences.getInstance().getAPP_NAME(), false);
+
         initIsUpbitService();
+        initMainService();
     }
 
-    public static synchronized QUllingApplication getInstance() {
-        return SINGLE_U;
+    private void initMainService() {
+        Intent intent = new Intent(qCon, MainService.class);
+        if (isMainServiceRunningCheck()) {
+            qCon.stopService(intent);
+        }
+        qCon.startService(intent);
     }
+
+    public boolean isMainServiceRunningCheck() {
+        ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (SERVICE_NAME_MAIN.equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 //    public static synchronized QcPreferences getQcPrefer() {
 //        if (appQcPreferences == null) {
 //            appQcPreferences = QcPreferences.getInstance(qCon, APP_NAME);
@@ -62,24 +89,25 @@ public class QUllingApplication extends QcBaseApplication {
         return UpbitRoomDatabase.getInstance(this, mAppExecutors);
     }
 
-    public boolean isServiceRunningCheck() {
+
+    public void initIsUpbitService() {
+        if (isUpbitService == null) {
+            isUpbitService = new MutableLiveData<Boolean>();
+        }
+        isUpbitService.postValue(isUpbitServiceRunningCheck());
+        QcLog.e("isServiceRunningCheck() == " + isUpbitServiceRunningCheck());
+    }
+
+    public boolean isUpbitServiceRunningCheck() {
         ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if ("UpbitService".equals(service.service.getClassName())) {
+            if (SERVICE_NAME_UPBIT.equals(service.service.getClassName())) {
                 return true;
             }
         }
         return false;
     }
 
-    public MutableLiveData<Boolean> initIsUpbitService() {
-        if (isUpbitService == null) {
-            isUpbitService = new MutableLiveData<Boolean>();
-        }
-        isUpbitService.postValue(isServiceRunningCheck());
-        QcLog.e("isServiceRunningCheck() == " + isServiceRunningCheck());
-        return isUpbitService;
-    }
     public MutableLiveData<Boolean> getIsUpbitService() {
         if (isUpbitService == null) {
             isUpbitService = new MutableLiveData<Boolean>();
@@ -89,7 +117,5 @@ public class QUllingApplication extends QcBaseApplication {
         return isUpbitService;
     }
 
-    public void setIsUpbitService(MutableLiveData<Boolean> isUpbitService) {
-        this.isUpbitService = isUpbitService;
-    }
+
 }
