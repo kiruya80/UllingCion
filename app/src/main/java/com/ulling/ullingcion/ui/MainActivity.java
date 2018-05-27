@@ -80,7 +80,7 @@ public class MainActivity extends QcBaseLifeActivity {
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        private String tabTitles[] = new String[]{"홈", "비트코인", "요약", "원화마켓"};
+        private String tabTitles[] = new String[]{"홈", "크립토워치 캔들", "크립토 예측", "업비트 원화마켓"};
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);

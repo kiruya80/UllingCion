@@ -29,4 +29,6 @@ public interface UpbitApi {
     @GET("/v1/crix/candles/days")
     Call<List<UpbitPriceResponse>> getKrwCoinAnswers(@Query("code") String code, @Query("count") String count, @Query("to") String to);
 
+
+    // https://crix-api-cdn.upbit.com/v1/crix/candles/minutes/1?code=CRIX.UPBIT.KRW-BTC&count=1&to=2018-05-27%2008:58:00
 }

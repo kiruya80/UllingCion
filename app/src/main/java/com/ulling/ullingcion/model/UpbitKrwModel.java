@@ -19,6 +19,7 @@ import retrofit2.Response;
 public class UpbitKrwModel {
     private static UpbitKrwModel sInstance;
 
+    private MutableLiveData<UpbitPriceResponse> upbitCoinPrice = null;
     private MutableLiveData<List<UpbitPriceResponse>> upbitPriceList = null;
 
     public UpbitKrwModel() {
@@ -34,6 +35,15 @@ public class UpbitKrwModel {
             }
         }
         return sInstance;
+    }
+
+    public MutableLiveData<UpbitPriceResponse> getCoinPrice() {
+        if (upbitCoinPrice == null) {
+            upbitCoinPrice = new MutableLiveData<UpbitPriceResponse>();
+        } else {
+            return upbitCoinPrice;
+        }
+        return upbitCoinPrice;
     }
 
     public MutableLiveData<List<UpbitPriceResponse>> getKrwList() {
@@ -86,7 +96,7 @@ public class UpbitKrwModel {
                     UpbitErrorResponse mError = new UpbitErrorResponse(response.errorBody().toString());
                     try {
 //                    {"status":404,"error":"Not Found","message":"Not Found","timeStamp":"Sun Apr 29 03:02:57 KST 2018","trace":null}
-                          mError = (UpbitErrorResponse) RetrofitUpbitService.retrofit.responseBodyConverter(
+                        mError = (UpbitErrorResponse) RetrofitUpbitService.retrofit.responseBodyConverter(
                                 UpbitErrorResponse.class, UpbitErrorResponse.class.getAnnotations())
                                 .convert(response.errorBody());
 //                        QcLog.e("UpbitErrorResponse ==== " + mError.toString());
@@ -121,4 +131,54 @@ public class UpbitKrwModel {
             }
         });
     }
+
+
+    public void loadCoinPrice(final String coinSymbol, String count, String to,
+                            final QcBaseRetrofitService.OnRetrofitListener onRetrofitListener) {
+        QcLog.e("loadCoinPrice " + coinSymbol + " , time " + to);
+        Call<List<UpbitPriceResponse>> call = RetrofitUpbitService.getInstance().getKrwCoinAnswers("CRIX.UPBIT.KRW-" + coinSymbol, count, to);
+        call.enqueue(new Callback<List<UpbitPriceResponse>>() {
+            @Override
+            public void onResponse(Call<List<UpbitPriceResponse>> call, Response<List<UpbitPriceResponse>> response) {
+                QcLog.e("loadCoinPrice message == " + response.code() + " , " + response.message().toString());
+                if (response.isSuccessful()) {
+//                    QcLog.e("onResponse isSuccessful == " + response.body());
+                    List<UpbitPriceResponse> result = response.body();
+                    if (result != null && result.size() > 0) {
+                        UpbitPriceResponse mUpbitPriceResponse = result.get(0);
+                        mUpbitPriceResponse.setCode(coinSymbol);
+                        mUpbitPriceResponse.setLogoImgUrl(ApiUrl.BASE_COIN_LOGO_URL + coinSymbol + ".png");
+
+                        upbitCoinPrice.postValue(mUpbitPriceResponse);
+                    }
+                    if (onRetrofitListener != null)
+                        onRetrofitListener.onSuccessful();
+
+                } else {
+                    UpbitErrorResponse mError = new UpbitErrorResponse(response.errorBody().toString());
+                    try {
+//                    {"status":404,"error":"Not Found","message":"Not Found","timeStamp":"Sun Apr 29 03:02:57 KST 2018","trace":null}
+                        mError = (UpbitErrorResponse) RetrofitUpbitService.retrofit.responseBodyConverter(
+                                UpbitErrorResponse.class, UpbitErrorResponse.class.getAnnotations())
+                                .convert(response.errorBody());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (onRetrofitListener != null)
+                        onRetrofitListener.onErrorBody(mError);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<UpbitPriceResponse>> call, Throwable t) {
+                QcLog.e("onFailure error loading from API == " + t.toString() + " , " + t.getMessage());
+                UpbitErrorResponse mError = new UpbitErrorResponse(t.getMessage());
+                if (onRetrofitListener != null)
+                    onRetrofitListener.onErrorBody(mError);
+            }
+        });
+    }
+
+
+
 }

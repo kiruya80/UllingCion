@@ -16,6 +16,7 @@ public class UpbitKrwViewModel extends QcBaseViewModel{
 
     private UpbitKrwModel upbitKrwModel;
 
+    private MutableLiveData<UpbitPriceResponse> upbitCoinPrice = null;
     private MutableLiveData<List<UpbitPriceResponse>> upbitPriceList = null;
 
     public UpbitKrwViewModel(@NonNull Application application) {
@@ -24,6 +25,13 @@ public class UpbitKrwViewModel extends QcBaseViewModel{
 
     public void setViewModel(UpbitKrwModel upbitKrwModel) {
         this.upbitKrwModel = upbitKrwModel;
+    }
+
+    public MutableLiveData<UpbitPriceResponse> getCoinPrice() {
+        if (upbitCoinPrice == null && upbitKrwModel != null) {
+            upbitCoinPrice = upbitKrwModel.getCoinPrice();
+        }
+        return upbitCoinPrice;
     }
 
     public LiveData<List<UpbitPriceResponse>> getKrwList( ) {
@@ -39,4 +47,13 @@ public class UpbitKrwViewModel extends QcBaseViewModel{
             upbitKrwModel.loadKrwList(coinSymbol, count, to, mOnRetrofitListener);
         }
     }
+
+
+    public void loadCoinPrice(String coinSymbol, String count, String to, QcBaseRetrofitService.OnRetrofitListener mOnRetrofitListener) {
+        if (upbitKrwModel != null) {
+            upbitKrwModel.loadCoinPrice(coinSymbol, count, to, mOnRetrofitListener);
+        }
+    }
+
+    // https://crix-api-cdn.upbit.com/v1/crix/candles/minutes/1?code=CRIX.UPBIT.KRW-BTC&count=1&to=2018-05-27%2008:58:00
 }

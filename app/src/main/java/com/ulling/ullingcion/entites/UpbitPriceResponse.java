@@ -49,7 +49,7 @@ public class UpbitPriceResponse extends QcBaseItem {
 
     @SerializedName("tradePrice")
     @Expose
-    private String tradePrice;
+    private double tradePrice;
 
     @SerializedName("candleDateTime")
     @Expose
@@ -158,11 +158,11 @@ public class UpbitPriceResponse extends QcBaseItem {
         this.signedChangePrice = signedChangePrice;
     }
 
-    public String getTradePrice() {
+    public double getTradePrice() {
         return tradePrice;
     }
 
-    public void setTradePrice(String tradePrice) {
+    public void setTradePrice(double tradePrice) {
         this.tradePrice = tradePrice;
     }
 

@@ -44,5 +44,55 @@ public class QcUtil {
         }
     }
 
+    public static String toNumFormat(int num) {
+//        DecimalFormat df = new DecimalFormat("#,###");
+        return df.format(num);
+    }
 
+    public static String toNumFormat(long num) {
+//        DecimalFormat df = new DecimalFormat("#,###");
+        return df.format(num);
+    }
+
+    public static String toNumFormat(double num) {
+//        DecimalFormat df = new DecimalFormat("#,###");
+        return df.format(num);
+    }
+
+    public static BigDecimal GetDoubleAdd(double value1, double value2) {
+        BigDecimal su1 = new BigDecimal(String.valueOf(value1));
+        BigDecimal su2 = new BigDecimal(String.valueOf(value2));
+
+        return su1.add(su2);   // 더하기
+    }
+
+    public static BigDecimal GetDoubleSubtract(double value1, double value2) {
+        QcLog.e("GetDoubleSubtract ===== " + value1 + " ===== " + value2);
+        BigDecimal su1 = new BigDecimal(String.valueOf(value1));
+        BigDecimal su2 = new BigDecimal(String.valueOf(value2));
+
+        QcLog.e("GetDoubleSubtract ===== " + su1.subtract(su2) );
+        return su1.subtract(su2);   // 빼기
+    }
+
+    public static BigDecimal GetDoubleMultiply(double value1, double value2) {
+        BigDecimal su1 = new BigDecimal(String.valueOf(value1));
+        BigDecimal su2 = new BigDecimal(String.valueOf(value2));
+
+        return su1.multiply(su2);   // 곱하기
+    }
+
+    public static BigDecimal GetDoubleDivide(double value1, double value2) {
+        BigDecimal su1 = new BigDecimal(String.valueOf(value1));
+        BigDecimal su2 = new BigDecimal(String.valueOf(value2));
+
+        return su1.divide(su2, BigDecimal.ROUND_UP);  // 나누기 - 소수점 4번째 자리에서 반올림.
+    }
+
+    public static BigDecimal GetDoubleDivide(double value1, double value2, int number) {
+        BigDecimal su1 = new BigDecimal(String.valueOf(value1));
+        BigDecimal su2 = new BigDecimal(String.valueOf(value2));
+
+        return su1.divide(su2, number, BigDecimal.ROUND_UP);  // 나누기 - 소수점 n번째 자리에서 반올림.
+    }
 }

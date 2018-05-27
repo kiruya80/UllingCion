@@ -4,6 +4,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="coin_symbol_btc">BTC</string>
+
     <string name="coin_symbol_xvg">XVG</string>
     <string name="coin_symbol_doge">DOGE</string>
     <string name="coin_symbol_zrx">ZRX</string>
