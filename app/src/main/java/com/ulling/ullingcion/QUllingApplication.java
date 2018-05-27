@@ -61,11 +61,15 @@ public class QUllingApplication extends QcBaseApplication {
     }
 
     private void initMainService() {
-        Intent intent = new Intent(qCon, MainService.class);
-        if (isMainServiceRunningCheck()) {
-            qCon.stopService(intent);
+        try {
+
+            Intent intent = new Intent(qCon, MainService.class);
+            if (isMainServiceRunningCheck()) {
+                qCon.stopService(intent);
+            }
+            qCon.startService(intent);
+        } catch (Exception e) {
         }
-        qCon.startService(intent);
     }
 
     public boolean isMainServiceRunningCheck() {

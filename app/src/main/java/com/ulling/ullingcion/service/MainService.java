@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 
 import com.ulling.lib.core.util.QcLog;
+import com.ulling.lib.core.util.QcPreferences;
 import com.ulling.lib.core.util.QcToast;
 import com.ulling.lib.core.util.QcUtil;
 import com.ulling.ullingcion.QUllingApplication;
@@ -39,10 +40,11 @@ import java.util.TimeZone;
 public class MainService extends LifecycleService {
     public String TAG = getClass().getSimpleName();
     private final int THREAD_PRIORITY_BACKGROUND = 1000;
+
     private final int HANDLE_USD_TO_KRW = 10;
-    private final int HANDLE_CRYPTOWATCH = 20;
-    private final int HANDLE_CRYPTOWATCH_CANDLES = 30;
-    private final int HANDLE_UPBIT = 40;
+    private final int HANDLE_UPBIT = 20;
+    private final int HANDLE_CRYPTOWATCH = 30;
+    private final int HANDLE_CRYPTOWATCH_CANDLES = 40;
 
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
@@ -82,18 +84,30 @@ public class MainService extends LifecycleService {
                 if (msg.arg1 == HANDLE_USD_TO_KRW) {
                     if (isUsdToKrw) {
                         try {
-                            // 30분 마다
-                            Thread.sleep(30 * 60 * 1000);
+                            // 10분 마다
+                            Thread.sleep(20 * 1000);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
                         updateUsdToKrw();
                     }
+
+                } else if (msg.arg1 == HANDLE_UPBIT) {
+                    if (isUpdateUpbit) {
+                        try {
+                            // 1분 마다
+                            Thread.sleep(20 * 1000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                        updateUpbitBtcPrice();
+                    }
+
                 } else if (msg.arg1 == HANDLE_CRYPTOWATCH) {
                     if (isCryptoWatch) {
                         try {
                             // 1분 마다
-                            Thread.sleep(1 * 60 * 1000);
+                            Thread.sleep(20 * 1000);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
@@ -110,16 +124,7 @@ public class MainService extends LifecycleService {
                         }
                         updateCryptoCandles();
                     }
-                } else if (msg.arg1 == HANDLE_UPBIT) {
-                    if (isUpdateUpbit) {
-                        try {
-                            // 20분 마다
-                            Thread.sleep(1 * 60 * 1000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                        updateUpbitBtcPrice();
-                    }
+
                 }
 
                 if (!isUsdToKrw && !isCryptoWatch && !isCryptoWatchCandles && !isUpdateUpbit)
@@ -158,178 +163,84 @@ public class MainService extends LifecycleService {
         mLineViewModel = new LineViewModel(qApp);
         mLineViewModel.setViewModel(LineModel.getInstance());
 
+        mUpbitUsdToKrwResponse = QcPreferences.getInstance().get(Define.PRE_USD_TO_KRW, UpbitUsdToKrwResponse.class);
+
+        if (mMainModel != null)
+            mMainModel.getUsdToKrw().observe(this, new Observer<List<UpbitUsdToKrwResponse>>() {
+                @Override
+                public void onChanged(@Nullable List<UpbitUsdToKrwResponse> upbitUsdToKrwResponses) {
+                    QcLog.e("observe getUsdToKrw == ");
+                    if (upbitUsdToKrwResponses != null && upbitUsdToKrwResponses.size() > 0) {
+                        mUpbitUsdToKrwResponse = upbitUsdToKrwResponses.get(0);
+                        QcPreferences.getInstance().put(Define.PRE_USD_TO_KRW, upbitUsdToKrwResponses);
+                        QcLog.e("getUsdToKrw === " + mUpbitUsdToKrwResponse.toString());
+                        getPremiumBtcPrice();
+                    }
+                }
+            });
+
         if (mCryptoWatchViewModel != null) {
             mCryptoWatchViewModel.getSummary().observe(this, new Observer<CryptowatSummary>() {
                 @Override
                 public void onChanged(@Nullable CryptowatSummary cryptowatSummary) {
-                    QcLog.e("observe getSummary == " + cryptowatSummary.toString());
-
+                    QcLog.e("observe getSummary == ");
                     if (cryptowatSummary != null && cryptowatSummary.getResult() != null) {
-//                        Double ladtPrice = Double.parseDouble(cryptowatSummary.getResult().getPrice().getLast());
-                        double ladtPrice = cryptowatSummary.getResult().getPrice().getLast();
                         mCryptowatSummary = cryptowatSummary;
                         getPremiumBtcPrice();
 
-                        if (Utils.getRound(ladtPrice, Utils.NUMBER_HUNDRED) != lastSummary) {
+                        double lastPrice = cryptowatSummary.getResult().getPrice().getLast();
+                        if (Utils.getRound(lastPrice, Utils.NUMBER_HUNDRED) != lastSummary) {
 //                            100 단위마다 알림
-                            QcLog.e("ladtPrice === " + ladtPrice + " , " + Utils.getRound(ladtPrice, 2));
+                            QcLog.e("ladtPrice === " + lastPrice + " , " + Utils.getRound(lastPrice, 2));
                             mLineViewModel.sendMsg("Bitfinex 가격 : " + cryptowatSummary.getResult().getPrice().getLast() + "달러");
-                            lastSummary = Utils.getRound(ladtPrice, 2);
-                            return;
-                        }
-//                        if (ladtPrice <= 6300 && lastSummary != 6300) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 6300;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 6400 && lastSummary != 6400) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 6400;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 6500 && lastSummary != 6500) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 6500;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 6600 && lastSummary != 6600) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 6600;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 6700 && lastSummary != 6700) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 6700;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 6800 && lastSummary != 6800) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 6800;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 6900 && lastSummary != 6900) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 6900;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 7000 && lastSummary != 7000) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 7000;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 7100 && lastSummary != 7100) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 7100;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 7300 && lastSummary != 7300) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 7300;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 7400 && lastSummary != 7400) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 7400;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 7500 && lastSummary != 7500) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 7500;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 7600 && lastSummary != 7600) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 7600;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 7700 && lastSummary != 7700) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 7700;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 7800 && lastSummary != 7800) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 7800;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 7900 && lastSummary != 7900) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 7900;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 8000 && lastSummary != 8000) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 8000;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 8100 && lastSummary != 8100) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 8100;
-//                            return;
-//                        }
-//                        if (ladtPrice <= 8200 && lastSummary != 8200) {
-//                            mLineViewModel.sendMsg(cryptowatSummary.toString());
-//                            lastSummary = 8200;
-//                            return;
-//                        }
-                    }
-                }
-            });
-
-            mCryptoWatchViewModel.getCandlesStick().observe(this, new Observer<CryptoWatchCandles>() {
-                @Override
-                public void onChanged(@Nullable CryptoWatchCandles cryptoWatchCandles) {
-                    QcLog.e("observe getCandles == " + cryptoWatchCandles.toString());
-
-                    if (cryptoWatchCandles != null && cryptoWatchCandles.getResult() != null) {
-                        if (cryptoWatchCandles.getResult().getCandles_1D() != null) {
-                            for (int i = 0; i < cryptoWatchCandles.getResult().getCandles_1D().size(); i++) {
-                                List<String> list = cryptoWatchCandles.getResult().getCandles_1D().get(i);
-                                long closeTime = Long.parseLong(list.get(0)) * 1000;
-
-                                Double OpenPrice = Double.parseDouble(list.get(1));
-                                Double HighPrice = Double.parseDouble(list.get(2));
-                                Double LowPrice = Double.parseDouble(list.get(3));
-                                Double ClosePrice = Double.parseDouble(list.get(4));
-                                Double Volume = Double.parseDouble(list.get(5));
-                                Date date = new Date(closeTime);
-
-                                String formattedDate = simpleDate.format(date);
-//                                QcLog.e("formattedDate == " + formattedDate + " == OpenPrice " + OpenPrice + " , " + HighPrice + " , " + LowPrice + " , " + ClosePrice + " , " + Volume);
-                            }
+                            lastSummary = Utils.getRound(lastPrice, 2);
                         }
                     }
                 }
             });
+
+//            mCryptoWatchViewModel.getCandlesStick().observe(this, new Observer<CryptoWatchCandles>() {
+//                @Override
+//                public void onChanged(@Nullable CryptoWatchCandles cryptoWatchCandles) {
+//                    QcLog.e("observe getCandles == " + cryptoWatchCandles.toString());
+//
+////                    if (cryptoWatchCandles != null && cryptoWatchCandles.getResult() != null) {
+////                        if (cryptoWatchCandles.getResult().getCandles_1D() != null) {
+////                            for (int i = 0; i < cryptoWatchCandles.getResult().getCandles_1D().size(); i++) {
+////                                List<String> list = cryptoWatchCandles.getResult().getCandles_1D().get(i);
+////                                long closeTime = Long.parseLong(list.get(0)) * 1000;
+////
+////                                Double OpenPrice = Double.parseDouble(list.get(1));
+////                                Double HighPrice = Double.parseDouble(list.get(2));
+////                                Double LowPrice = Double.parseDouble(list.get(3));
+////                                Double ClosePrice = Double.parseDouble(list.get(4));
+////                                Double Volume = Double.parseDouble(list.get(5));
+////                                Date date = new Date(closeTime);
+////
+////                                String formattedDate = simpleDate.format(date);
+////                            }
+////                        }
+////                    }
+//                }
+//            });
         }
 
-        mUpbitKrwViewModel.getCoinPrice().observe(this, new Observer<UpbitPriceResponse>() {
-            @Override
-            public void onChanged(@Nullable UpbitPriceResponse upbitPriceResponse) {
-                if (upbitPriceResponse != null) {
-                    QcLog.e("getCoinPrice === " + upbitPriceResponse.toString());
-                    mUpbitPriceResponse = upbitPriceResponse;
-                    getPremiumBtcPrice();
-                }
+        if (mUpbitKrwViewModel != null)
+            mUpbitKrwViewModel.getCoinPrice().observe(this, new Observer<UpbitPriceResponse>() {
+                @Override
+                public void onChanged(@Nullable UpbitPriceResponse upbitPriceResponse) {
+                    if (upbitPriceResponse != null) {
+                        mUpbitPriceResponse = upbitPriceResponse;
+                        getPremiumBtcPrice();
+                    }
 
-            }
-        });
-
-        mMainModel.getUsdToKrw().observe(this, new Observer<List<UpbitUsdToKrwResponse>>() {
-            @Override
-            public void onChanged(@Nullable List<UpbitUsdToKrwResponse> upbitUsdToKrwResponses) {
-                if (upbitUsdToKrwResponses != null && upbitUsdToKrwResponses.size() > 0) {
-                    mUpbitUsdToKrwResponse = upbitUsdToKrwResponses.get(0);
-                    QcLog.e("getUsdToKrw === " + mUpbitUsdToKrwResponse.toString());
-                    getPremiumBtcPrice();
                 }
-            }
-        });
+            });
 
         isUsdToKrw = true;
+        isUpdateUpbit = true;
         isCryptoWatch = true;
         isCryptoWatchCandles = true;
-        isUpdateUpbit = true;
     }
 
     @Override
@@ -338,9 +249,9 @@ public class MainService extends LifecycleService {
         QcToast.getInstance().show(TAG + " Start ! ", false);
 
         updateUsdToKrw();
-        updateCryptoSummary();
-        updateCryptoCandles();
         updateUpbitBtcPrice();
+        updateCryptoSummary();
+//        updateCryptoCandles();
 
         mLineViewModel.sendMsg("Coin Service START !");
 
@@ -354,6 +265,22 @@ public class MainService extends LifecycleService {
 
             Message msg = mServiceHandler.obtainMessage();
             msg.arg1 = HANDLE_USD_TO_KRW;
+            mServiceHandler.sendMessage(msg);
+        }
+    }
+
+    private void updateUpbitBtcPrice() {
+        if (mUpbitKrwViewModel != null) {
+            QcLog.e("updateUpbitBtcPrice ==");
+
+            String getTime = simpleDate.format(System.currentTimeMillis());
+
+            String coinSymbol = getResources().getString(R.string.coin_symbol_btc);
+
+            mUpbitKrwViewModel.loadCoinPrice(coinSymbol, "1", getTime, null);
+
+            Message msg = mServiceHandler.obtainMessage();
+            msg.arg1 = HANDLE_UPBIT;
             mServiceHandler.sendMessage(msg);
         }
     }
@@ -380,21 +307,6 @@ public class MainService extends LifecycleService {
     }
 
 
-    private void updateUpbitBtcPrice() {
-        if (mUpbitKrwViewModel != null) {
-            QcLog.e("updateUpbitBtcPrice ==");
-
-            String getTime = simpleDate.format(System.currentTimeMillis());
-
-            String coinSymbol = getResources().getString(R.string.coin_symbol_btc);
-
-            mUpbitKrwViewModel.loadCoinPrice(coinSymbol, "1", getTime, null);
-
-            Message msg = mServiceHandler.obtainMessage();
-            msg.arg1 = HANDLE_UPBIT;
-            mServiceHandler.sendMessage(msg);
-        }
-    }
 
 
     private void getPremiumBtcPrice() {
@@ -403,9 +315,6 @@ public class MainService extends LifecycleService {
 
             double upbitBtcPrice = mUpbitPriceResponse.getTradePrice();
             double cryptoBtcUsd = QcUtil.GetDoubleMultiply(mUpbitUsdToKrwResponse.getBasePrice(), mCryptowatSummary.getResult().getPrice().getLast()).doubleValue();
-
-            upbitBtcPrice = 10000;
-            cryptoBtcUsd = 9000;
 
             BigDecimal price = QcUtil.GetDoubleDivide(upbitBtcPrice, cryptoBtcUsd, 4);
             BigDecimal price_ = QcUtil.GetDoubleSubtract(price.doubleValue(), 1.0);
@@ -416,6 +325,7 @@ public class MainService extends LifecycleService {
                 //역프일때만
                 String text =
                         mUpbitUsdToKrwResponse.getDate() + "\n"
+                                + simpleDate.format(mUpbitPriceResponse.getTimestamp()) + "\n"
                                 + "환율 1달러 : " + QcUtil.toNumFormat(mUpbitUsdToKrwResponse.getBasePrice()) + " 원" + "\n"
                                 + "Bitfinex 가격 : " + QcUtil.toNumFormat(mCryptowatSummary.getResult().getPrice().getLast()) + "달러\n"
                                 + "(원화 : " + QcUtil.toNumFormat(cryptoBtcUsd) + " 원)" + "\n"

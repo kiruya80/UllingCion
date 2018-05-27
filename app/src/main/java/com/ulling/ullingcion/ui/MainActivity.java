@@ -88,7 +88,6 @@ public class MainActivity extends QcBaseLifeActivity {
 
         @Override
         public Fragment getItem(int position) {
-            QcLog.e("getItem == " + position);
             return BaseQLifecycleFragmentList.get(position);
         }
 

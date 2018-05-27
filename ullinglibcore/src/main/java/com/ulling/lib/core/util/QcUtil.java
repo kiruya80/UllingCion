@@ -67,11 +67,9 @@ public class QcUtil {
     }
 
     public static BigDecimal GetDoubleSubtract(double value1, double value2) {
-        QcLog.e("GetDoubleSubtract ===== " + value1 + " ===== " + value2);
         BigDecimal su1 = new BigDecimal(String.valueOf(value1));
         BigDecimal su2 = new BigDecimal(String.valueOf(value2));
 
-        QcLog.e("GetDoubleSubtract ===== " + su1.subtract(su2) );
         return su1.subtract(su2);   // 빼기
     }
 

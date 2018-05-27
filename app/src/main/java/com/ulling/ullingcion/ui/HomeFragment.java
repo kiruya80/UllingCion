@@ -7,9 +7,11 @@ import android.support.annotation.Nullable;
 
 import com.ulling.lib.core.ui.QcBaseShowLifeFragement;
 import com.ulling.lib.core.util.QcLog;
+import com.ulling.lib.core.util.QcPreferences;
 import com.ulling.lib.core.util.QcUtil;
 import com.ulling.ullingcion.QUllingApplication;
 import com.ulling.ullingcion.R;
+import com.ulling.ullingcion.common.Define;
 import com.ulling.ullingcion.databinding.FragmentHomeBinding;
 import com.ulling.ullingcion.entites.Cryptowat.CryptowatSummary;
 import com.ulling.ullingcion.entites.UpbitPriceResponse;
@@ -24,7 +26,9 @@ import com.ulling.ullingcion.viewmodel.MainViewModel;
 import com.ulling.ullingcion.viewmodel.UpbitKrwViewModel;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends QcBaseShowLifeFragement {
     private QUllingApplication qApp;
@@ -37,6 +41,7 @@ public class HomeFragment extends QcBaseShowLifeFragement {
     private UpbitUsdToKrwResponse mUpbitUsdToKrwResponse;
     private UpbitPriceResponse mUpbitPriceResponse;
     private CryptowatSummary mCryptowatSummary;
+    private SimpleDateFormat simpleDate;
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -65,15 +70,15 @@ public class HomeFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needInitToOnCreate() {
-        QcLog.e("needInitToOnCreate == ");
         qApp = QUllingApplication.getInstance();
         APP_NAME = QUllingApplication.getAppName();
+        simpleDate = new SimpleDateFormat("MM-dd hh:mm:ss", Locale.KOREA);
+        mUpbitUsdToKrwResponse = QcPreferences.getInstance().get(Define.PRE_USD_TO_KRW, UpbitUsdToKrwResponse.class);
     }
 
 
     @Override
     protected void needUIBinding() {
-        QcLog.e("needUIBinding == ");
         viewBinding = (FragmentHomeBinding) getViewBinding();
     }
 
@@ -101,13 +106,6 @@ public class HomeFragment extends QcBaseShowLifeFragement {
                     mUpbitUsdToKrwResponse = upbitUsdToKrwResponses.get(0);
                     QcLog.e("getUsdToKrw === " + mUpbitUsdToKrwResponse.toString());
                     getPremiumBtcPrice();
-
-//                    viewBinding.tvUsdToKrw.setText(
-//                            upbitUsdToKrwResponses_.get(0).getDate() + " "
-//                                    + upbitUsdToKrwResponses_.get(0).getTime() + "\n"
-//                                    + "환율 1달러 : \n"
-//                                    + upbitUsdToKrwResponses_.get(0).getBasePrice() + " 원");
-
                 }
             }
         });
@@ -153,6 +151,7 @@ public class HomeFragment extends QcBaseShowLifeFragement {
 
             viewBinding.tvUsdToKrw.setText(
                     mUpbitUsdToKrwResponse.getDate() + "\n"
+                            + simpleDate.format(mUpbitPriceResponse.getTimestamp()) + "\n"
                             + "환율 1달러 : " + QcUtil.toNumFormat(mUpbitUsdToKrwResponse.getBasePrice()) + " 원" + "\n"
                             + "Bitfinex 가격 : " + QcUtil.toNumFormat(cryptoBtcUsd) + " 원\n"
                             + QcUtil.toNumFormat(mCryptowatSummary.getResult().getPrice().getLast()) + "달러\n"

@@ -26,7 +26,10 @@ public class MainViewModel extends QcBaseViewModel {
         this.mainModel = mainModel;
     }
 
-
+    /**
+     * 환율가져오기
+     * @return
+     */
     public LiveData<List<UpbitUsdToKrwResponse>> getUsdToKrw( ) {
         if (upbitUsdToKrwResponse == null && mainModel != null) {
             upbitUsdToKrwResponse = mainModel.getUsdToKrw( );
