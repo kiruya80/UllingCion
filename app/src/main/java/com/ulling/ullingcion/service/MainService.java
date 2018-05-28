@@ -63,7 +63,7 @@ public class MainService extends LifecycleService {
     private boolean isUpdateUpbit = false;
 
     private SimpleDateFormat simpleDate;
-    private double lastSummary = 0;
+    private int lastSummary = 0;
 
     private UpbitUsdToKrwResponse mUpbitUsdToKrwResponse;
     private UpbitPriceResponse mUpbitPriceResponse;
@@ -189,11 +189,14 @@ public class MainService extends LifecycleService {
                         getPremiumBtcPrice();
 
                         double lastPrice = cryptowatSummary.getResult().getPrice().getLast();
-                        if (Utils.getRound(lastPrice, Utils.NUMBER_HUNDRED) != lastSummary) {
+//                        double lastSummary_ = Utils.getRound(lastPrice, Utils.NUMBER_HUNDRED);
+                        BigDecimal lastSummary_ = QcUtil.GetDoubleDivide(lastPrice, 50);
+                        QcLog.e("lastSummary_ == " + lastSummary_.intValue() + " , " + lastSummary+ " , " + lastPrice);
+//                        if (Utils.getRound(lastPrice, Utils.NUMBER_HUNDRED) != lastSummary) {
+                        if (lastSummary_.intValue()!= lastSummary) {
+                            lastSummary = lastSummary_.intValue();
 //                            100 단위마다 알림
-                            QcLog.e("ladtPrice === " + lastPrice + " , " + Utils.getRound(lastPrice, 2));
                             mLineViewModel.sendMsg("Bitfinex 가격 : " + cryptowatSummary.getResult().getPrice().getLast() + "달러");
-                            lastSummary = Utils.getRound(lastPrice, 2);
                         }
                     }
                 }
@@ -305,8 +308,6 @@ public class MainService extends LifecycleService {
             mServiceHandler.sendMessage(msg);
         }
     }
-
-
 
 
     private void getPremiumBtcPrice() {
