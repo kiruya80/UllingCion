@@ -19,7 +19,7 @@
                 android:layout_marginTop="@dimen/p50"
                 android:gravity="center|left"
                 android:text="환율"
-                android:textSize="@dimen/p60" />
+                android:textSize="@dimen/p70" />
 
             <TextView
                 android:id="@+id/tvUsdToKrw"
@@ -29,8 +29,7 @@
                 android:layout_marginRight="@dimen/p50"
                 android:layout_marginTop="@dimen/p50"
                 android:gravity="center|left"
-                android:text="환율"
-                android:textSize="@dimen/p40" />
+                android:textSize="@dimen/p60" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -85,7 +84,7 @@
                 android:layout_marginRight="@dimen/p50"
                 android:layout_marginTop="@dimen/p50"
                 android:gravity="center|left"
-                android:textSize="@dimen/p40" />
+                android:textSize="@dimen/p60" />
 
             <ImageView
                 android:layout_width="match_parent"

@@ -172,13 +172,12 @@ public class HomeFragment extends QcBaseShowLifeFragement {
             BigDecimal premium = QcUtil.GetDoubleSubtract(upbitBtcPrice, cryptoBtcUsd);
 
             viewBinding.tvUsdToKrw.setText(
-                    mUpbitUsdToKrwResponse.getDate() + "\n"
-                            + simpleDate.format(mUpbitPriceResponse.getTimestamp()) + "\n"
+                    mUpbitUsdToKrwResponse.getDate() + " / " + simpleDate.format(mUpbitPriceResponse.getTimestamp()) + "\n"
                             + "환율 1달러 : " + QcUtil.toNumFormat(mUpbitUsdToKrwResponse.getBasePrice()) + " 원" + "\n"
-                            + "Bitfinex 가격 : " + QcUtil.toNumFormat(cryptoBtcUsd) + " 원\n"
-                            + QcUtil.toNumFormat(mCryptowatSummary.getResult().getPrice().getLast()) + "달러\n"
+                            + "Bitfinex 가격 : " + QcUtil.toNumFormat(mCryptowatSummary.getResult().getPrice().getLast()) + " 달러 ("
+                            + QcUtil.toNumFormat(cryptoBtcUsd) + " 원)\n"
                             + "업비트 가격 : " + QcUtil.toNumFormat(upbitBtcPrice) + " 원 \n"
-                            + "프리미엄 : " + QcUtil.toNumFormat(premium.intValue()) + " ("
+                            + "프리미엄 : " + QcUtil.toNumFormat(premium.intValue()) + " 원 ("
                             + QcUtil.toNumFormat(premiumPercent.doubleValue()) + "%)");
         }
     }
