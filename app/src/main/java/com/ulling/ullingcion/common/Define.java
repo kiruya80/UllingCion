@@ -24,6 +24,8 @@ public class Define extends QcDefine {
 
     public static final String PRE_USD_TO_KRW = "PRE_USD_TO_KRW";
     public static final String PRE_UPBIT_KRW_LIST = "PRE_UPBIT_KRW_LIST";
+    public static final String PRE_BTC_PRICE = "PRE_BTC_PRICE";
+
     public static final String LINE_AUTH = "Bearer ceN0PqIIuEdA9acv35az7YCyVQcdXJtOf1GwgAr4oxN";
 
 

@@ -12,7 +12,6 @@ import com.ulling.ullingcion.entites.Cryptowat.CandlesResult;
 import com.ulling.ullingcion.entites.Cryptowat.CryptoWatchCandles;
 import com.ulling.ullingcion.entites.Cryptowat.CryptowatSummary;
 import com.ulling.ullingcion.network.RetrofitCryptowatService;
-import com.ulling.ullingcion.util.Utils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;

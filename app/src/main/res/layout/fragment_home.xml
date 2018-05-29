@@ -12,29 +12,86 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvServiceStatus"
+                android:id="@+id/tvUsdToKrwTitle"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/p200"
-                android:gravity="center"
-                android:text="Home"
-                android:textSize="20sp" />
-
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/p50"
+                android:layout_marginTop="@dimen/p50"
+                android:gravity="center|left"
+                android:text="환율"
+                android:textSize="@dimen/p60" />
 
             <TextView
                 android:id="@+id/tvUsdToKrw"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/p10"
-                android:gravity="center"
+                android:layout_marginLeft="@dimen/p50"
+                android:layout_marginRight="@dimen/p50"
+                android:layout_marginTop="@dimen/p50"
+                android:gravity="center|left"
                 android:text="환율"
-                android:textSize="20sp" />
+                android:textSize="@dimen/p40" />
 
-            <Button
-                android:id="@+id/btnMainService"
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/p2"
+                android:layout_marginTop="@dimen/p50"
+                android:background="@color/color_dim_gray_50" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/p10"
-                android:text="Main Service Start" />
+                android:layout_marginLeft="@dimen/p50"
+                android:layout_marginRight="@dimen/p50"
+                android:layout_marginTop="@dimen/p50"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|left"
+                    android:text="비트가격알림"
+                    android:textSize="@dimen/p60" />
+
+                <EditText
+                    android:id="@+id/editBtcPrice"
+                    android:layout_width="0px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/p50"
+                    android:layout_marginRight="@dimen/p50"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:maxLength="10" />
+
+                <Button
+                    android:id="@+id/btnPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="등록" />
+
+                <Button
+                    android:id="@+id/btnResetPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="리셋" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvBtcPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/p50"
+                android:layout_marginRight="@dimen/p50"
+                android:layout_marginTop="@dimen/p50"
+                android:gravity="center|left"
+                android:textSize="@dimen/p40" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/p2"
+                android:layout_marginTop="@dimen/p50"
+                android:background="@color/color_dim_gray_50" />
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

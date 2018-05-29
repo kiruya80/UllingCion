@@ -24,7 +24,6 @@ import com.ulling.ullingcion.model.CryptoWatchModel;
 import com.ulling.ullingcion.model.LineModel;
 import com.ulling.ullingcion.model.MainModel;
 import com.ulling.ullingcion.model.UpbitKrwModel;
-import com.ulling.ullingcion.util.Utils;
 import com.ulling.ullingcion.viewmodel.CryptoWatchViewModel;
 import com.ulling.ullingcion.viewmodel.LineViewModel;
 import com.ulling.ullingcion.viewmodel.MainViewModel;
@@ -64,10 +63,13 @@ public class MainService extends LifecycleService {
 
     private SimpleDateFormat simpleDate;
     private int lastSummary = 0;
+    private double lastSummary_100 = 0;
 
     private UpbitUsdToKrwResponse mUpbitUsdToKrwResponse;
     private UpbitPriceResponse mUpbitPriceResponse;
     private CryptowatSummary mCryptowatSummary;
+
+    private List<Integer> btcPriceList;
 
     public MainService() {
     }
@@ -85,7 +87,7 @@ public class MainService extends LifecycleService {
                     if (isUsdToKrw) {
                         try {
                             // 10분 마다
-                            Thread.sleep(20 * 1000);
+                            Thread.sleep(30 * 1000);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
@@ -96,7 +98,7 @@ public class MainService extends LifecycleService {
                     if (isUpdateUpbit) {
                         try {
                             // 1분 마다
-                            Thread.sleep(20 * 1000);
+                            Thread.sleep(30 * 1000);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
@@ -107,7 +109,7 @@ public class MainService extends LifecycleService {
                     if (isCryptoWatch) {
                         try {
                             // 1분 마다
-                            Thread.sleep(20 * 1000);
+                            Thread.sleep(30 * 1000);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
@@ -118,7 +120,7 @@ public class MainService extends LifecycleService {
                     if (isCryptoWatchCandles) {
                         try {
                             // 20분 마다
-                            Thread.sleep(20 * 60 * 1000);
+                            Thread.sleep(30 * 1000);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
@@ -141,6 +143,7 @@ public class MainService extends LifecycleService {
         qApp = QUllingApplication.getInstance();
         startService = true;
         qApp.getIsUpbitService().postValue(true);
+        btcPriceList = QcPreferences.getInstance().getList(Define.PRE_BTC_PRICE, Integer.class);
 
         simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
         simpleDate.setTimeZone(TimeZone.getTimeZone("GMT+9"));
@@ -189,14 +192,32 @@ public class MainService extends LifecycleService {
                         getPremiumBtcPrice();
 
                         double lastPrice = cryptowatSummary.getResult().getPrice().getLast();
-//                        double lastSummary_ = Utils.getRound(lastPrice, Utils.NUMBER_HUNDRED);
-                        BigDecimal lastSummary_ = QcUtil.GetDoubleDivide(lastPrice, 50);
-                        QcLog.e("lastSummary_ == " + lastSummary_.intValue() + " , " + lastSummary+ " , " + lastPrice);
+
+                        if (btcPriceList != null && btcPriceList.size() > 0) {
+                            for (int i = 0; i < btcPriceList.size(); i++) {
+                                if (btcPriceList.get(i) == lastPrice) {
+                                    mLineViewModel.sendMsg("Bitfinex 가격 : " + cryptowatSummary.getResult().getPrice().getLast() + "달러");
+                                    return;
+                                }
+                            }
+                        }
+
+                        BigDecimal lastSummary_50 = QcUtil.GetDoubleDivide(lastPrice, 50);
 //                        if (Utils.getRound(lastPrice, Utils.NUMBER_HUNDRED) != lastSummary) {
-                        if (lastSummary_.intValue()!= lastSummary) {
-                            lastSummary = lastSummary_.intValue();
-//                            100 단위마다 알림
+                        if (lastSummary_50.intValue() != lastSummary) {
+//                            50단위로 알림
+                            QcLog.e("lastSummary_ == " + lastSummary_50.intValue() + " , " + lastSummary + " , " + lastPrice);
+                            lastSummary = lastSummary_50.intValue();
                             mLineViewModel.sendMsg("Bitfinex 가격 : " + cryptowatSummary.getResult().getPrice().getLast() + "달러");
+                        } else {
+                            double lastSummary100 = QcUtil.getRound(lastPrice, QcUtil.NUMBER_HUNDRED);
+                            if (lastSummary100 != lastSummary_100) {
+                                QcLog.e("lastSummary100 == " + lastSummary100 + " , " + lastSummary_100 + " , " + lastSummary_100 + " , " + lastPrice);
+                                lastSummary_100 = lastSummary100;
+                                // 100 단위 달라졌을 경우 알림
+                                lastSummary = lastSummary_50.intValue();
+                                mLineViewModel.sendMsg("Bitfinex 가격 : " + cryptowatSummary.getResult().getPrice().getLast() + "달러");
+                            }
                         }
                     }
                 }
@@ -252,9 +273,9 @@ public class MainService extends LifecycleService {
         QcToast.getInstance().show(TAG + " Start ! ", false);
 
         updateUsdToKrw();
-        updateUpbitBtcPrice();
-        updateCryptoSummary();
-//        updateCryptoCandles();
+//        updateUpbitBtcPrice();
+//        updateCryptoSummary();
+////        updateCryptoCandles();
 
         mLineViewModel.sendMsg("Coin Service START !");
 
@@ -267,7 +288,8 @@ public class MainService extends LifecycleService {
             mMainModel.loadUsdToKrw();
 
             Message msg = mServiceHandler.obtainMessage();
-            msg.arg1 = HANDLE_USD_TO_KRW;
+//            msg.arg1 = HANDLE_USD_TO_KRW;
+            msg.arg1 = HANDLE_UPBIT;
             mServiceHandler.sendMessage(msg);
         }
     }
@@ -283,7 +305,8 @@ public class MainService extends LifecycleService {
             mUpbitKrwViewModel.loadCoinPrice(coinSymbol, "1", getTime, null);
 
             Message msg = mServiceHandler.obtainMessage();
-            msg.arg1 = HANDLE_UPBIT;
+//            msg.arg1 = HANDLE_UPBIT;
+            msg.arg1 = HANDLE_CRYPTOWATCH;
             mServiceHandler.sendMessage(msg);
         }
     }
@@ -293,7 +316,8 @@ public class MainService extends LifecycleService {
             mCryptoWatchViewModel.loadSummary();
 
             Message msg = mServiceHandler.obtainMessage();
-            msg.arg1 = HANDLE_CRYPTOWATCH;
+//            msg.arg1 = HANDLE_CRYPTOWATCH;
+            msg.arg1 = HANDLE_CRYPTOWATCH_CANDLES;
             mServiceHandler.sendMessage(msg);
         }
     }
@@ -304,7 +328,8 @@ public class MainService extends LifecycleService {
             mCryptoWatchViewModel.loadCandlesStick(QcUtil.GetUnixTime(after.getTime()), Define.VALUE_CRYPTOWAT_1D);
 
             Message msg = mServiceHandler.obtainMessage();
-            msg.arg1 = HANDLE_CRYPTOWATCH_CANDLES;
+//            msg.arg1 = HANDLE_CRYPTOWATCH_CANDLES;
+            msg.arg1 = HANDLE_USD_TO_KRW;
             mServiceHandler.sendMessage(msg);
         }
     }
