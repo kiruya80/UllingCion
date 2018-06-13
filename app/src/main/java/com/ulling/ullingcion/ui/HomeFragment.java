@@ -9,11 +9,13 @@ import com.ulling.lib.core.listener.OnSingleClickListener;
 import com.ulling.lib.core.ui.QcBaseShowLifeFragement;
 import com.ulling.lib.core.util.QcLog;
 import com.ulling.lib.core.util.QcPreferences;
+import com.ulling.lib.core.util.QcToast;
 import com.ulling.lib.core.util.QcUtil;
 import com.ulling.ullingcion.QUllingApplication;
 import com.ulling.ullingcion.R;
 import com.ulling.ullingcion.common.Define;
 import com.ulling.ullingcion.databinding.FragmentHomeBinding;
+import com.ulling.ullingcion.entites.Cryptowat.Candles;
 import com.ulling.ullingcion.entites.Cryptowat.CryptowatSummary;
 import com.ulling.ullingcion.entites.UpbitPriceResponse;
 import com.ulling.ullingcion.entites.UpbitUsdToKrwResponse;
@@ -155,6 +157,18 @@ public class HomeFragment extends QcBaseShowLifeFragement {
                         getPremiumBtcPrice();
                     }
 
+                }
+            });
+
+            mCryptoWatchViewModel.getCandles().observe(this, new Observer<List<Candles>>() {
+                @Override
+                public void onChanged(@Nullable List<Candles> candles) {
+                    if (candles != null && candles.size() > 0) {
+                        for (int i = 0; i < candles.size(); i++) {
+                            QcLog.e("getCandles === " + candles.toString());
+                            mMainModel.insertCandle(candles.get(i));
+                        }
+                    }
                 }
             });
         }

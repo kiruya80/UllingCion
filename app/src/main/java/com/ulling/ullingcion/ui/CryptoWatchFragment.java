@@ -128,10 +128,10 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
             @Override
             public void onChanged(@Nullable List<Candles> candles) {
                 QcLog.e("observe getCandles == " + candles.size());
-                if (adapter != null) {
-//                    adapter.addListDiffResult(sortByCloseTime(candles, order), new CryptoDiffCallback(adapter.itemList, candles));
+                if (adapter != null && candles.size() > 0) {
                     List<Candles> candles_ = new ArrayList<>();
-                    candles_.addAll(candles.subList(0, 50));
+                    int size = candles.size() / 10;
+                    candles_.addAll(candles.subList(0, size));
                     adapter.addListDiffResult(candles_, new CryptoDiffCallback(adapter.itemList, candles));
                 }
             }

@@ -1,78 +1,32 @@
 package com.ulling.ullingcion.entites.Cryptowat;
 
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import com.ulling.lib.core.entities.QcBaseItem;
 
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Candles extends QcBaseItem {
-    private long closeTime;
-    private double openPrice;
-    private double highPrice;
-    private double lowPrice;
-    private double closePrice;
-    private double volume;
 
-    public Calculations calculations = new Calculations();
+@Entity
+public class Candles extends QcBaseItem implements Serializable {
+    @NonNull @PrimaryKey
+    public long id;
+    public long closeTime;
+    public double openPrice;
+    public double highPrice;
+    public double lowPrice;
+    public double closePrice;
+    public double volume;
 
-    public class Calculations {
-        public double rs = 0;
-        public double rsi = 0;
-        public double rsAvgGain = 0;
-        public double rsAvgLoss = 0;
-        public double change = 0;
+//    @Ignore
+//    public Calculations calculations;
 
-        public double getRs() {
-            return rs;
-        }
-
-        public void setRs(double rs) {
-            this.rs = rs;
-        }
-
-        public double getRsi() {
-            return rsi;
-        }
-
-        public void setRsi(double rsi) {
-            this.rsi = rsi;
-        }
-
-        public double getRsAvgGain() {
-            return rsAvgGain;
-        }
-
-        public void setRsAvgGain(double rsAvgGain) {
-            this.rsAvgGain = rsAvgGain;
-        }
-
-        public double getRsAvgLoss() {
-            return rsAvgLoss;
-        }
-
-        public void setRsAvgLoss(double rsAvgLoss) {
-            this.rsAvgLoss = rsAvgLoss;
-        }
-
-        public double getChange() {
-            return change;
-        }
-
-        public void setChange(double change) {
-            this.change = change;
-        }
-
-        @Override
-        public String toString() {
-            return "Calculations{" +
-                    "rs=" + rs +
-                    ", rsi=" + rsi +
-                    ", rsAvgGain=" + rsAvgGain +
-                    ", rsAvgLoss=" + rsAvgLoss +
-                    ", change=" + change +
-                    '}';
-        }
-    }
     public Candles() {
     }
 
@@ -134,24 +88,25 @@ public class Candles extends QcBaseItem {
         this.volume = volume;
     }
 
-    public Calculations getCalculations() {
-        return calculations;
+    @NonNull
+    public long getId() {
+        return id;
     }
 
-    public void setCalculations(Calculations calculations) {
-        this.calculations = calculations;
+    public void setId(@NonNull long id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
         return "Candles{" +
-                "closeTime=" + closeTime +
+                "id=" + id +
+                ", closeTime=" + closeTime +
                 ", openPrice=" + openPrice +
                 ", highPrice=" + highPrice +
                 ", lowPrice=" + lowPrice +
                 ", closePrice=" + closePrice +
                 ", volume=" + volume +
-                ", calculations=" + calculations +
                 '}';
     }
 }

@@ -92,17 +92,17 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
         viewBinding.btnServiceStart.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                Intent intent = new Intent(qCon, UpbitService.class);
-                qCon.stopService(intent);
-                intent = new Intent(qCon, UpbitService.class);
-                qCon.startService(intent);
+//                Intent intent = new Intent(qCon, UpbitService.class);
+//                qCon.stopService(intent);
+//                intent = new Intent(qCon, UpbitService.class);
+//                qCon.startService(intent);
             }
         });
         viewBinding.btnServiceStop.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                Intent intent = new Intent(qCon, UpbitService.class);
-                qCon.stopService(intent);
+//                Intent intent = new Intent(qCon, UpbitService.class);
+//                qCon.stopService(intent);
             }
         });
     }

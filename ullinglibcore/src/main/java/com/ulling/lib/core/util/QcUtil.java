@@ -197,6 +197,13 @@ public class QcUtil {
         return su1.divide(su2, number, BigDecimal.ROUND_UP);  // 나누기 - 소수점 n번째 자리에서 반올림.
     }
 
+    public static BigDecimal GetDoubleRemainder(double value1, double value2) {
+        BigDecimal su1 = new BigDecimal(String.valueOf(value1));
+        BigDecimal su2 = new BigDecimal(String.valueOf(value2));
+
+        return su1.remainder(su2);  // 나머지 % 연산
+    }
+
     public static void hiddenSoftKey(Context c, EditText editText) {
         if (editText == null)
             return;

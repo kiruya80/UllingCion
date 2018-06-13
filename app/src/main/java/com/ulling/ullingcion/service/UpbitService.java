@@ -144,7 +144,7 @@ public class UpbitService extends LifecycleService {
             }
         });
 
-        isUpdateUpbit = true;
+//        isUpdateUpbit = true;
     }
 
     @Override
@@ -152,7 +152,7 @@ public class UpbitService extends LifecycleService {
         QcLog.e("onStartCommand ==");
         QcToast.getInstance().show("Service Start ! ", false);
 
-        updateUpbitKrw();
+//        updateUpbitKrw();
         mLineViewModel.sendMsg("Coin Service START !");
 
         return super.onStartCommand(intent, flags, startId);

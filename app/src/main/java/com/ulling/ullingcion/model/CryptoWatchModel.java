@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import com.ulling.lib.core.util.QcLog;
 import com.ulling.lib.core.util.QcUtil;
 import com.ulling.ullingcion.common.Define;
+import com.ulling.ullingcion.entites.Cryptowat.Calculations;
 import com.ulling.ullingcion.entites.Cryptowat.Candles;
 import com.ulling.ullingcion.entites.Cryptowat.CandlesLine;
 import com.ulling.ullingcion.entites.Cryptowat.CandlesResult;
@@ -460,76 +461,75 @@ public class CryptoWatchModel {
     double gainSum = 0;
     double lossSum = 0;
 
-    private void getRsi(int t) {
-        QcLog.e("getRsi 1111 ===== " + t + " ===== " + candlesList.get(t).toString());
-        if (0 == t) {
-            this.candlesList.get(t).calculations.change = 0;
-            this.candlesList.get(t).calculations.rs = 0;
-            this.candlesList.get(t).calculations.rsi = 0;
-            return;
-        }
-
-        int n = defaultPeriods;
-        candlesList.get(t).calculations.setChange(QcUtil.GetDoubleSubtract(candlesList.get(t).getClosePrice(), candlesList.get(t).getOpenPrice()).doubleValue());
-
-//        if (defaultPeriods == t) {
-            if (t <= n) {
-            if (candlesList.get(t).calculations.change >= 0) {
-                // 양봉
-                gainSum = QcUtil.GetDoubleAdd(gainSum, candlesList.get(t).calculations.change).doubleValue();
-            } else {
-                lossSum = QcUtil.GetDoubleAdd(lossSum, (-candlesList.get(t).calculations.change)).doubleValue();
-            }
-                QcLog.e("getRsi calculations 333 ===== " + gainSum + " , " + lossSum);
-            candlesList.get(t).calculations.setRsAvgGain(QcUtil.GetDoubleDivide(gainSum, n).doubleValue());
-            candlesList.get(t).calculations.setRsAvgLoss(QcUtil.GetDoubleDivide(lossSum, n).doubleValue());
-                QcLog.e("getRsi calculations 333 ===== " + t + " ===== " + candlesList.get(t).calculations.toString());
-            return;
-
-        } else if (t > n) {
-            Candles.Calculations a = this.candlesList.get(t - 1).calculations;
-            if (this.candlesList.get(t).calculations.change > 0) {
-                double rsAvgLoss_ = QcUtil.GetDoubleMultiply(a.rsAvgLoss, (n - 1)).doubleValue();
-                this.candlesList.get(t).calculations.rsAvgLoss = QcUtil.GetDoubleDivide(rsAvgLoss_, n).doubleValue();
-
-                double rsAvgGain_ = QcUtil.GetDoubleMultiply(a.rsAvgGain, (n - 1)).doubleValue();
-                if (candlesList.get(t).calculations.change >= 0) {
-                    double rsAvgGainAdd = QcUtil.GetDoubleAdd(rsAvgGain_, this.candlesList.get(t).calculations.change).doubleValue();
-                    this.candlesList.get(t).calculations.rsAvgGain = QcUtil.GetDoubleDivide(rsAvgGainAdd, n).doubleValue();
-                } else {
-                    double rsAvgGainAdd = QcUtil.GetDoubleAdd(rsAvgGain_, (-this.candlesList.get(t).calculations.change)).doubleValue();
-                    this.candlesList.get(t).calculations.rsAvgGain = QcUtil.GetDoubleDivide(rsAvgGainAdd, n).doubleValue();
-                }
-
-
-            } else {
-                if (candlesList.get(t).calculations.change >= 0) {
-                    double rsAvgLoss_ = QcUtil.GetDoubleMultiply(a.rsAvgLoss, (n - 1)).doubleValue();
-                    double rsAvgLossAdd = QcUtil.GetDoubleAdd(rsAvgLoss_, this.candlesList.get(t).calculations.change).doubleValue();
-                    this.candlesList.get(t).calculations.rsAvgLoss = QcUtil.GetDoubleDivide(rsAvgLossAdd, n).doubleValue();
-
-                } else {
-                    double rsAvgLoss_ = QcUtil.GetDoubleMultiply(a.rsAvgLoss, (n - 1)).doubleValue();
-                    double rsAvgLossAdd = QcUtil.GetDoubleAdd(rsAvgLoss_, (-this.candlesList.get(t).calculations.change)).doubleValue();
-                    this.candlesList.get(t).calculations.rsAvgLoss = QcUtil.GetDoubleDivide(rsAvgLossAdd, n).doubleValue();
-
-                }
-                double rsAvgGain_ = QcUtil.GetDoubleMultiply(a.rsAvgGain, (n - 1)).doubleValue();
-                this.candlesList.get(t).calculations.rsAvgGain = QcUtil.GetDoubleDivide(rsAvgGain_, n).doubleValue();
-            }
-
-
-            if (this.candlesList.get(t).calculations.rsAvgLoss == 0) {
-                this.candlesList.get(t).calculations.rsi = 100;
-            } else {
-                this.candlesList.get(t).calculations.rs = QcUtil.GetDoubleDivide(this.candlesList.get(t).calculations.rsAvgGain, this.candlesList.get(t).calculations.rsAvgLoss).doubleValue();
-
-                double rsAdd = QcUtil.GetDoubleAdd(1, this.candlesList.get(t).calculations.rs).doubleValue();
-                double rsDivide = QcUtil.GetDoubleDivide(100, rsAdd).doubleValue();
-                this.candlesList.get(t).calculations.rsi = QcUtil.GetDoubleSubtract(100, rsDivide).doubleValue();
-            }
-            QcLog.e("getRsi calculations 333 ===== " + t + " ===== " + candlesList.get(t).calculations.toString());
-        }
-
-    }
+//    private void getRsi(int t) {
+//        QcLog.e("getRsi 1111 ===== " + t + " ===== " + candlesList.get(t).toString());
+//        if (0 == t) {
+//            this.candlesList.get(t).calculations.change = 0;
+//            this.candlesList.get(t).calculations.rs = 0;
+//            this.candlesList.get(t).calculations.rsi = 0;
+//            return;
+//        }
+//
+//        int n = defaultPeriods;
+//        candlesList.get(t).calculations.setChange(QcUtil.GetDoubleSubtract(candlesList.get(t).getClosePrice(), candlesList.get(t).getOpenPrice()).doubleValue());
+//
+////        if (defaultPeriods == t) {
+//            if (t <= n) {
+//            if (candlesList.get(t).calculations.change >= 0) {
+//                // 양봉
+//                gainSum = QcUtil.GetDoubleAdd(gainSum, candlesList.get(t).calculations.change).doubleValue();
+//            } else {
+//                lossSum = QcUtil.GetDoubleAdd(lossSum, (-candlesList.get(t).calculations.change)).doubleValue();
+//            }
+//                QcLog.e("getRsi calculations 333 ===== " + gainSum + " , " + lossSum);
+//            candlesList.get(t).calculations.setRsAvgGain(QcUtil.GetDoubleDivide(gainSum, n).doubleValue());
+//            candlesList.get(t).calculations.setRsAvgLoss(QcUtil.GetDoubleDivide(lossSum, n).doubleValue());
+//                QcLog.e("getRsi calculations 333 ===== " + t + " ===== " + candlesList.get(t).calculations.toString());
+//            return;
+//
+//        } else if (t > n) {
+//            Calculations a = this.candlesList.get(t - 1).calculations;
+//            if (this.candlesList.get(t).calculations.change > 0) {
+//                double rsAvgLoss_ = QcUtil.GetDoubleMultiply(a.rsAvgLoss, (n - 1)).doubleValue();
+//                this.candlesList.get(t).calculations.rsAvgLoss = QcUtil.GetDoubleDivide(rsAvgLoss_, n).doubleValue();
+//
+//                double rsAvgGain_ = QcUtil.GetDoubleMultiply(a.rsAvgGain, (n - 1)).doubleValue();
+//                if (candlesList.get(t).calculations.change >= 0) {
+//                    double rsAvgGainAdd = QcUtil.GetDoubleAdd(rsAvgGain_, this.candlesList.get(t).calculations.change).doubleValue();
+//                    this.candlesList.get(t).calculations.rsAvgGain = QcUtil.GetDoubleDivide(rsAvgGainAdd, n).doubleValue();
+//                } else {
+//                    double rsAvgGainAdd = QcUtil.GetDoubleAdd(rsAvgGain_, (-this.candlesList.get(t).calculations.change)).doubleValue();
+//                    this.candlesList.get(t).calculations.rsAvgGain = QcUtil.GetDoubleDivide(rsAvgGainAdd, n).doubleValue();
+//                }
+//
+//
+//            } else {
+//                if (candlesList.get(t).calculations.change >= 0) {
+//                    double rsAvgLoss_ = QcUtil.GetDoubleMultiply(a.rsAvgLoss, (n - 1)).doubleValue();
+//                    double rsAvgLossAdd = QcUtil.GetDoubleAdd(rsAvgLoss_, this.candlesList.get(t).calculations.change).doubleValue();
+//                    this.candlesList.get(t).calculations.rsAvgLoss = QcUtil.GetDoubleDivide(rsAvgLossAdd, n).doubleValue();
+//
+//                } else {
+//                    double rsAvgLoss_ = QcUtil.GetDoubleMultiply(a.rsAvgLoss, (n - 1)).doubleValue();
+//                    double rsAvgLossAdd = QcUtil.GetDoubleAdd(rsAvgLoss_, (-this.candlesList.get(t).calculations.change)).doubleValue();
+//                    this.candlesList.get(t).calculations.rsAvgLoss = QcUtil.GetDoubleDivide(rsAvgLossAdd, n).doubleValue();
+//
+//                }
+//                double rsAvgGain_ = QcUtil.GetDoubleMultiply(a.rsAvgGain, (n - 1)).doubleValue();
+//                this.candlesList.get(t).calculations.rsAvgGain = QcUtil.GetDoubleDivide(rsAvgGain_, n).doubleValue();
+//            }
+//
+//
+//            if (this.candlesList.get(t).calculations.rsAvgLoss == 0) {
+//                this.candlesList.get(t).calculations.rsi = 100;
+//            } else {
+//                this.candlesList.get(t).calculations.rs = QcUtil.GetDoubleDivide(this.candlesList.get(t).calculations.rsAvgGain, this.candlesList.get(t).calculations.rsAvgLoss).doubleValue();
+//
+//                double rsAdd = QcUtil.GetDoubleAdd(1, this.candlesList.get(t).calculations.rs).doubleValue();
+//                double rsDivide = QcUtil.GetDoubleDivide(100, rsAdd).doubleValue();
+//                this.candlesList.get(t).calculations.rsi = QcUtil.GetDoubleSubtract(100, rsDivide).doubleValue();
+//            }
+//            QcLog.e("getRsi calculations 333 ===== " + t + " ===== " + candlesList.get(t).calculations.toString());
+//        }
+//    }
 }
