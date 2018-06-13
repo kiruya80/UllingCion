@@ -96,8 +96,6 @@ public class UpbitService extends LifecycleService {
     @Override
     public void onCreate() {
         super.onCreate();
-        QcLog.e("onCreate ==");
-
 //        AndroidInjection.inject(this);
 //        tvShowViewModel = new TVShowViewModel(tvShowDataRepo);
 //        tvShowViewModel.init(14);
@@ -124,7 +122,6 @@ public class UpbitService extends LifecycleService {
         mUpbitKrwViewModel.getKrwList().observe(this, new Observer<List<UpbitPriceResponse>>() {
             @Override
             public void onChanged(@Nullable List<UpbitPriceResponse> upbitPriceResponses) {
-                QcLog.e("getKrwList observe === ");
                 // 원화 상장 예정
                 QcToast.getInstance().show("원화 상장 예정 ! ", false);
                 if (upbitPriceResponses != null && upbitPriceResponses.size() > 0) {
@@ -133,11 +130,9 @@ public class UpbitService extends LifecycleService {
 
 
                     List<UpbitPriceResponse> result = QcPreferences.getInstance().getList(Define.PRE_UPBIT_KRW_LIST, UpbitPriceResponse.class);
-                    QcLog.e("getKrwList observe 11 == " + result.size() + " , " + result.toString());
                     if (result == null || result.isEmpty())
                         result = new ArrayList<UpbitPriceResponse>();
                     result.add(upbitPriceResponses.get(0));
-                    QcLog.e("getKrwList observe 22== " + result.size() + " , " + result.toString());
                     QcPreferences.getInstance().putList(Define.PRE_UPBIT_KRW_LIST, result);
 
                 }
@@ -149,7 +144,6 @@ public class UpbitService extends LifecycleService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        QcLog.e("onStartCommand ==");
         QcToast.getInstance().show("Service Start ! ", false);
 
 //        updateUpbitKrw();
@@ -160,7 +154,6 @@ public class UpbitService extends LifecycleService {
 
     private void updateUpbitKrw() {
         if (mUpbitKrwViewModel != null) {
-            QcLog.e("UpdateUpbitKrw ==");
 
             // 원화상자예정
 //        https://crix-api-cdn.upbit.com/v1/crix/candles/minutes/1?code=CRIX.UPBIT.KRW-GTO&count=2&to=2018-04-20%2011:42:00
@@ -183,7 +176,6 @@ public class UpbitService extends LifecycleService {
             }
 
             List<UpbitPriceResponse> result = QcPreferences.getInstance().getList(Define.PRE_UPBIT_KRW_LIST, UpbitPriceResponse.class);
-            QcLog.e("getKrwList observe 11 == " + result.size() + " , " + result.toString());
             if (result == null || result.isEmpty())
                 result = new ArrayList<UpbitPriceResponse>();
 

@@ -58,9 +58,7 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needOnShowToUser() {
-        List<UpbitPriceResponse> result = QcPreferences.getInstance().getList("upbit_krw_list_01", UpbitPriceResponse.class);
-        if (result != null)
-            QcLog.e("result == " + result.toString());
+//        List<UpbitPriceResponse> result = QcPreferences.getInstance().getList("upbit_krw_list_01", UpbitPriceResponse.class);
     }
 
     @Override
@@ -73,7 +71,6 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needInitToOnCreate() {
-        QcLog.e("needInitToOnCreate == ");
         qApp = QUllingApplication.getInstance();
         APP_NAME = QUllingApplication.getAppName();
         adapter = new UpbitKrwAdapter(this, null);
@@ -82,7 +79,6 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needUIBinding() {
-        QcLog.e("needUIBinding == ");
         viewBinding = (FragmentUpbitKrwBinding) getViewBinding();
         viewBinding.qcRecyclerView.setAdapter(adapter, viewBinding.tvEmpty);
     }
@@ -115,7 +111,6 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
         mUpbitKrwViewModel.getKrwList().observe(this, new Observer<List<UpbitPriceResponse>>() {
             @Override
             public void onChanged(@Nullable List<UpbitPriceResponse> upbitPriceResponses) {
-                QcLog.e("getKrwList observe === ");
                 // 원화 상장 예정
                 if (adapter != null) {
                     adapter.addListDiffResult(upbitPriceResponses);
@@ -126,7 +121,6 @@ public class UpbitKrwFragment extends QcBaseShowLifeFragement {
         qApp.getIsUpbitService().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean aBoolean) {
-                QcLog.e("getIsUpbitService == " + aBoolean);
                 if (aBoolean) {
                     viewBinding.tvServiceStatus.setText("Service Status : START !");
                 } else {

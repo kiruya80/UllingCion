@@ -23,7 +23,6 @@ public class QUllingApplication extends QcBaseApplication {
     private static QUllingApplication SINGLE_U;
     public static Context qCon;
     private MutableLiveData<Boolean> isUpbitService = null;
-//    public static QcPreferences appQcPreferences;
 
     private final String SERVICE_NAME_MAIN = "MainService";
     private final String SERVICE_NAME_UPBIT = "UpbitService";
@@ -82,24 +81,15 @@ public class QUllingApplication extends QcBaseApplication {
         return false;
     }
 
-//    public static synchronized QcPreferences getQcPrefer() {
-//        if (appQcPreferences == null) {
-//            appQcPreferences = QcPreferences.getInstance(qCon, APP_NAME);
-//        }
-//        return appQcPreferences;
-//    }
-
     public UpbitRoomDatabase getDatabase() {
         return UpbitRoomDatabase.getInstance(this, mAppExecutors);
     }
-
 
     public void initIsUpbitService() {
         if (isUpbitService == null) {
             isUpbitService = new MutableLiveData<Boolean>();
         }
         isUpbitService.postValue(isUpbitServiceRunningCheck());
-        QcLog.e("isServiceRunningCheck() == " + isUpbitServiceRunningCheck());
     }
 
     public boolean isUpbitServiceRunningCheck() {
@@ -115,7 +105,6 @@ public class QUllingApplication extends QcBaseApplication {
     public MutableLiveData<Boolean> getIsUpbitService() {
         if (isUpbitService == null) {
             isUpbitService = new MutableLiveData<Boolean>();
-//            isUpbitService.postValue(false);
             initIsUpbitService();
         }
         return isUpbitService;

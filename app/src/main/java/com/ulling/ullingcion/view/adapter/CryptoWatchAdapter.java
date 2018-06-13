@@ -62,7 +62,6 @@ public class CryptoWatchAdapter extends QcRecyclerBaseAdapter<Candles> {
 
     @Override
     protected void needUIBinding(QcBaseViewHolder holder, int position, Object object) {
-        QcLog.i("needUIBinding == ");
         Candles item = (Candles) object;
         if (item.getType() == TYPE_DEFAULT) {
             RowCryptowatchBinding hoderBinding = (RowCryptowatchBinding) holder.getBinding();

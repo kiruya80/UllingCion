@@ -57,9 +57,7 @@ public class UpbitKrwAdapter extends QcRecyclerBaseAdapter<UpbitPriceResponse> {
 
     @Override
     protected void needUIBinding(QcBaseViewHolder holder, int position, Object object) {
-        QcLog.i("needUIBinding == ");
         UpbitPriceResponse item = (UpbitPriceResponse) object;
-        QcLog.i("item == " + item.toString());
         RowUpbitKrwBinding hoderBinding = (RowUpbitKrwBinding) holder.getBinding();
 
         Picasso.get()
@@ -91,9 +89,7 @@ public class UpbitKrwAdapter extends QcRecyclerBaseAdapter<UpbitPriceResponse> {
 
     @Override
     protected void needUIOtherBinding(QcBaseViewHolder holder, int position, Object object) {
-        QcLog.i("needUIOtherBinding == ");
         UpbitPriceResponse item = (UpbitPriceResponse) object;
-        QcLog.i("item == " + item.toString());
         if (item.getType() == TYPE_ERROR) {
             RowUpbitKrwErrorBinding hoderBinding = (RowUpbitKrwErrorBinding) holder.getBinding();
 

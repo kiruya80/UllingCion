@@ -67,14 +67,11 @@ public class UpbitKrwModel {
 
     public void loadKrwList(final String coinSymbol, String count, String to,
                             final QcBaseRetrofitService.OnRetrofitListener onRetrofitListener) {
-        QcLog.e("coinSymbol " + coinSymbol + " , time " + to);
         Call<List<UpbitPriceResponse>> call = RetrofitUpbitService.getInstance().getKrwCoinAnswers("CRIX.UPBIT.KRW-" + coinSymbol, count, to);
         call.enqueue(new Callback<List<UpbitPriceResponse>>() {
             @Override
             public void onResponse(Call<List<UpbitPriceResponse>> call, Response<List<UpbitPriceResponse>> response) {
-                QcLog.e("message == " + response.code() + " , " + response.message().toString());
                 if (response.isSuccessful()) {
-//                    QcLog.e("onResponse isSuccessful == " + response.body());
                     List<UpbitPriceResponse> result = response.body();
                     if (result != null && result.size() == 0) {
                         // 원화 상장 예정 []
@@ -99,7 +96,6 @@ public class UpbitKrwModel {
                         mError = (UpbitErrorResponse) RetrofitUpbitService.retrofit.responseBodyConverter(
                                 UpbitErrorResponse.class, UpbitErrorResponse.class.getAnnotations())
                                 .convert(response.errorBody());
-//                        QcLog.e("UpbitErrorResponse ==== " + mError.toString());
 
                         // 테스트용
 //                        UpbitPriceResponse mUpbitPriceResponse = new UpbitPriceResponse();
@@ -135,14 +131,11 @@ public class UpbitKrwModel {
 
     public void loadCoinPrice(final String coinSymbol, String count, String to,
                             final QcBaseRetrofitService.OnRetrofitListener onRetrofitListener) {
-        QcLog.e("loadCoinPrice " + coinSymbol + " , time " + to);
         Call<List<UpbitPriceResponse>> call = RetrofitUpbitService.getInstance().getKrwCoinAnswers("CRIX.UPBIT.KRW-" + coinSymbol, count, to);
         call.enqueue(new Callback<List<UpbitPriceResponse>>() {
             @Override
             public void onResponse(Call<List<UpbitPriceResponse>> call, Response<List<UpbitPriceResponse>> response) {
-                QcLog.e("loadCoinPrice message == " + response.code() + " , " + response.message().toString());
                 if (response.isSuccessful()) {
-//                    QcLog.e("onResponse isSuccessful == " + response.body());
                     List<UpbitPriceResponse> result = response.body();
                     if (result != null && result.size() > 0) {
                         UpbitPriceResponse mUpbitPriceResponse = result.get(0);

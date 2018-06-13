@@ -80,7 +80,6 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needInitToOnCreate() {
-        QcLog.e("needInitToOnCreate == ");
         qApp = QUllingApplication.getInstance();
         APP_NAME = QUllingApplication.getAppName();
 //         diffCallback = new CryptoDiffCallback(this.itemList, mNewItemList);
@@ -94,7 +93,6 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needUIBinding() {
-        QcLog.e("needUIBinding == ");
         viewBinding = (FragmentCryptowatchBinding) getViewBinding();
         viewBinding.qcRecyclerView.setAdapter(adapter, viewBinding.tvEmpty);
     }
@@ -111,7 +109,6 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
             @Override
             public void onSingleClick(View v) {
                 if (adapter != null) {
-                    QcLog.e("btnOrder === " + order);
                     order = !order;
                     adapter.addAll(sortByCloseTime(viewModel.getCandles().getValue(), order));
                 }
@@ -127,7 +124,6 @@ public class CryptoWatchFragment extends QcBaseShowLifeFragement {
         viewModel.getCandles().observe(this, new Observer<List<Candles>>() {
             @Override
             public void onChanged(@Nullable List<Candles> candles) {
-                QcLog.e("observe getCandles == " + candles.size());
                 if (adapter != null && candles.size() > 0) {
                     List<Candles> candles_ = new ArrayList<>();
                     int size = candles.size() / 10;

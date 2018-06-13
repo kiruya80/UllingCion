@@ -43,7 +43,6 @@ public class MainViewModel extends QcBaseViewModel {
     public long insertCandle(Candles candle) {
         if (candlesDao != null) {
             long resultIndex = candlesDao.insertCandle(candle);
-            QcLog.e("insertCandle " + resultIndex);
             return resultIndex;
         } else {
             return -1;

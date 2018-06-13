@@ -158,7 +158,6 @@ public class MainService extends LifecycleService {
     @Override
     public void onCreate() {
         super.onCreate();
-        QcLog.e("onCreate ==");
 
         qApp = QUllingApplication.getInstance();
         startService = true;
@@ -192,11 +191,9 @@ public class MainService extends LifecycleService {
             mMainModel.getUsdToKrw().observe(this, new Observer<List<UpbitUsdToKrwResponse>>() {
                 @Override
                 public void onChanged(@Nullable List<UpbitUsdToKrwResponse> upbitUsdToKrwResponses) {
-                    QcLog.e("observe getUsdToKrw == ");
                     if (upbitUsdToKrwResponses != null && upbitUsdToKrwResponses.size() > 0) {
                         mUpbitUsdToKrwResponse = upbitUsdToKrwResponses.get(0);
                         QcPreferences.getInstance().put(Define.PRE_USD_TO_KRW, upbitUsdToKrwResponses);
-                        QcLog.e("getUsdToKrw === " + mUpbitUsdToKrwResponse.toString());
                         getPremiumBtcPrice();
                     }
                 }
@@ -206,13 +203,13 @@ public class MainService extends LifecycleService {
             mCryptoWatchViewModel.getSummary().observe(this, new Observer<CryptowatSummary>() {
                 @Override
                 public void onChanged(@Nullable CryptowatSummary cryptowatSummary) {
-                    QcLog.e("observe getSummary == ");
                     if (cryptowatSummary != null && cryptowatSummary.getResult() != null) {
                         mCryptowatSummary = cryptowatSummary;
                         getPremiumBtcPrice();
 
                         double lastPrice = cryptowatSummary.getResult().getPrice().getLast();
 
+                        // 사용자가 정한 가격알림
                         if (btcPriceList != null && btcPriceList.size() > 0) {
                             for (int i = 0; i < btcPriceList.size(); i++) {
                                 if (btcPriceList.get(i) == lastPrice) {
@@ -223,7 +220,6 @@ public class MainService extends LifecycleService {
                         }
 
                         BigDecimal lastSummary_50 = QcUtil.GetDoubleRemainder(lastPrice, 50);
-                        QcLog.e("lastSummary_ == " + lastSummary_50.toString() + " , " + lastSummary + " , " + lastPrice);
                         if (lastSummary_50.longValue() == 0) {
                             //  50단위로 알림
                             lastSummary = lastSummary_50.intValue();
@@ -238,7 +234,6 @@ public class MainService extends LifecycleService {
 //            mCryptoWatchViewModel.getCandlesStick().observe(this, new Observer<CryptoWatchCandles>() {
 //                @Override
 //                public void onChanged(@Nullable CryptoWatchCandles cryptoWatchCandles) {
-//                    QcLog.e("observe getCandles == " + cryptoWatchCandles.toString());
 //
 ////                    if (cryptoWatchCandles != null && cryptoWatchCandles.getResult() != null) {
 ////                        if (cryptoWatchCandles.getResult().getCandles_1D() != null) {
@@ -277,7 +272,6 @@ public class MainService extends LifecycleService {
             mUpbitKrwViewModel.getKrwList().observe(this, new Observer<List<UpbitPriceResponse>>() {
                 @Override
                 public void onChanged(@Nullable List<UpbitPriceResponse> upbitPriceResponses) {
-                    QcLog.e("getKrwList observe === ");
                     // 원화 상장 예정
                     QcToast.getInstance().show("원화 상장 예정 ! ", false);
                     if (upbitPriceResponses != null && upbitPriceResponses.size() > 0) {
@@ -286,11 +280,9 @@ public class MainService extends LifecycleService {
 
 
                         List<UpbitPriceResponse> result = QcPreferences.getInstance().getList(Define.PRE_UPBIT_KRW_LIST, UpbitPriceResponse.class);
-                        QcLog.e("getKrwList observe 11 == " + result.size() + " , " + result.toString());
                         if (result == null || result.isEmpty())
                             result = new ArrayList<UpbitPriceResponse>();
                         result.add(upbitPriceResponses.get(0));
-                        QcLog.e("getKrwList observe 22== " + result.size() + " , " + result.toString());
                         QcPreferences.getInstance().putList(Define.PRE_UPBIT_KRW_LIST, result);
 
                     }
@@ -306,7 +298,6 @@ public class MainService extends LifecycleService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        QcLog.e("onStartCommand ==");
         QcToast.getInstance().show(TAG + " Start ! ", false);
 
         updateUsdToKrw();
@@ -318,7 +309,6 @@ public class MainService extends LifecycleService {
 
     private void updateUsdToKrw() {
         if (mMainModel != null) {
-            QcLog.e("updateUsdToKrw ==");
             mMainModel.loadUsdToKrw();
 
             Message msg = mServiceHandler.obtainMessage();
@@ -329,8 +319,6 @@ public class MainService extends LifecycleService {
 
     private void updateUpbitBtcPrice() {
         if (mUpbitKrwViewModel != null) {
-            QcLog.e("updateUpbitBtcPrice ==");
-
             String getTime = simpleDate.format(System.currentTimeMillis());
 
             String coinSymbol = getResources().getString(R.string.coin_symbol_btc);
@@ -346,7 +334,6 @@ public class MainService extends LifecycleService {
 
     private void updateUpbitKrwCoin() {
         if (mUpbitKrwViewModel != null && isUpdateUpbitKrwCoin) {
-            QcLog.e("updateUpbitKrwCoin ==");
 
             // 원화상자예정
 //        https://crix-api-cdn.upbit.com/v1/crix/candles/minutes/1?code=CRIX.UPBIT.KRW-GTO&count=2&to=2018-04-20%2011:42:00
@@ -368,7 +355,6 @@ public class MainService extends LifecycleService {
 
             if (isUpdateUpbitKrwCoin) {
                 List<UpbitPriceResponse> result = QcPreferences.getInstance().getList(Define.PRE_UPBIT_KRW_LIST, UpbitPriceResponse.class);
-                QcLog.e("getKrwList observe 11 == " + result.size() + " , " + result.toString());
                 if (result == null || result.isEmpty())
                     result = new ArrayList<UpbitPriceResponse>();
 
@@ -418,7 +404,6 @@ public class MainService extends LifecycleService {
      * 프리미엄 계산
      */
     private void getPremiumBtcPrice() {
-        QcLog.e("getPremiumBtcPrice === ");
         if (mUpbitUsdToKrwResponse != null && mUpbitPriceResponse != null && mCryptowatSummary != null) {
 
             double upbitBtcPrice = mUpbitPriceResponse.getTradePrice();

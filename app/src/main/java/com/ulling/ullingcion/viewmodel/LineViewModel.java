@@ -41,7 +41,6 @@ public class LineViewModel extends QcBaseViewModel {
 
             Map<String, String> params = new HashMap<String, String>();
             params.put("message", message);
-            QcLog.e("sendMsg === " + params.toString());
             lineModel.sendMsg(params);
         }
     }
@@ -62,7 +61,6 @@ public class LineViewModel extends QcBaseViewModel {
             params.put("imageThumbnail", imgUrl);
             if (!imgUrl.isEmpty())
             params.put("imageFullsize", imgUrl);
-            QcLog.e("sendMsg === " + params.toString());
             lineModel.sendMsg(params);
         }
     }

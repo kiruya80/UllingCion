@@ -130,8 +130,7 @@ public class HomeFragment extends QcBaseShowLifeFragement {
             public void onChanged(@Nullable List<UpbitUsdToKrwResponse> upbitUsdToKrwResponses) {
                 if (upbitUsdToKrwResponses != null && upbitUsdToKrwResponses.size() > 0) {
                     mUpbitUsdToKrwResponse = upbitUsdToKrwResponses.get(0);
-                    QcLog.e("getUsdToKrw === " + mUpbitUsdToKrwResponse.toString());
-                    getPremiumBtcPrice();
+                    setPremiumBtcPriceText();
                 }
             }
         });
@@ -140,9 +139,8 @@ public class HomeFragment extends QcBaseShowLifeFragement {
             @Override
             public void onChanged(@Nullable UpbitPriceResponse upbitPriceResponse) {
                 if (upbitPriceResponse != null) {
-                    QcLog.e("getCoinPrice === " + upbitPriceResponse.toString());
                     mUpbitPriceResponse = upbitPriceResponse;
-                    getPremiumBtcPrice();
+                    setPremiumBtcPriceText();
                 }
             }
         });
@@ -152,9 +150,8 @@ public class HomeFragment extends QcBaseShowLifeFragement {
                 @Override
                 public void onChanged(@Nullable CryptowatSummary cryptowatSummary) {
                     if (cryptowatSummary != null) {
-                        QcLog.e("getSummary === " + cryptowatSummary.toString());
                         mCryptowatSummary = cryptowatSummary;
-                        getPremiumBtcPrice();
+                        setPremiumBtcPriceText();
                     }
 
                 }
@@ -165,7 +162,6 @@ public class HomeFragment extends QcBaseShowLifeFragement {
                 public void onChanged(@Nullable List<Candles> candles) {
                     if (candles != null && candles.size() > 0) {
                         for (int i = 0; i < candles.size(); i++) {
-                            QcLog.e("getCandles === " + candles.toString());
                             mMainModel.insertCandle(candles.get(i));
                         }
                     }
@@ -174,8 +170,8 @@ public class HomeFragment extends QcBaseShowLifeFragement {
         }
     }
 
-    private void getPremiumBtcPrice() {
-        QcLog.e("getPremiumBtcPrice === ");
+    private void setPremiumBtcPriceText() {
+        QcLog.e("setPremiumBtcPriceText ========= ");
         if (mUpbitUsdToKrwResponse != null && mUpbitPriceResponse != null && mCryptowatSummary != null) {
             double upbitBtcPrice = mUpbitPriceResponse.getTradePrice();
             double cryptoBtcUsd = QcUtil.GetDoubleMultiply(mUpbitUsdToKrwResponse.getBasePrice(), mCryptowatSummary.getResult().getPrice().getLast()).doubleValue();
@@ -185,14 +181,17 @@ public class HomeFragment extends QcBaseShowLifeFragement {
             BigDecimal premiumPercent = QcUtil.GetDoubleMultiply(price_.doubleValue(), 100.0);
             BigDecimal premium = QcUtil.GetDoubleSubtract(upbitBtcPrice, cryptoBtcUsd);
 
-            viewBinding.tvUsdToKrw.setText(
-                    mUpbitUsdToKrwResponse.getDate() + " / " + simpleDate.format(mUpbitPriceResponse.getTimestamp()) + "\n"
-                            + "환율 1달러 : " + QcUtil.toNumFormat(mUpbitUsdToKrwResponse.getBasePrice()) + " 원" + "\n"
-                            + "Bitfinex 가격 : " + QcUtil.toNumFormat(mCryptowatSummary.getResult().getPrice().getLast()) + " 달러 ("
-                            + QcUtil.toNumFormat(cryptoBtcUsd) + " 원)\n"
-                            + "업비트 가격 : " + QcUtil.toNumFormat(upbitBtcPrice) + " 원 \n"
-                            + "프리미엄 : " + QcUtil.toNumFormat(premium.intValue()) + " 원 ("
-                            + QcUtil.toNumFormat(premiumPercent.doubleValue()) + "%)");
+            String text =  mUpbitUsdToKrwResponse.getDate() + " / " + simpleDate.format(mUpbitPriceResponse.getTimestamp()) + "\n"
+                    + "환율 1달러 : " + QcUtil.toNumFormat(mUpbitUsdToKrwResponse.getBasePrice()) + " 원" + "\n"
+                    + "Bitfinex 가격 : " + QcUtil.toNumFormat(mCryptowatSummary.getResult().getPrice().getLast()) + " 달러 ("
+                    + QcUtil.toNumFormat(cryptoBtcUsd) + " 원)\n"
+                    + "업비트 가격 : " + QcUtil.toNumFormat(upbitBtcPrice) + " 원 \n"
+                    + "프리미엄 : " + QcUtil.toNumFormat(premium.intValue()) + " 원 ("
+                    + QcUtil.toNumFormat(premiumPercent.doubleValue()) + "%)";
+
+            viewBinding.tvUsdToKrw.setText(text);
+        } else {
+            QcLog.e("setPremiumBtcPriceText null ========= ");
         }
     }
 

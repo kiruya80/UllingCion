@@ -63,7 +63,6 @@ public class CryptoSummaryFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needInitToOnCreate() {
-        QcLog.e("needInitToOnCreate == ");
         qApp = QUllingApplication.getInstance();
         APP_NAME = QUllingApplication.getAppName();
 
@@ -77,7 +76,6 @@ public class CryptoSummaryFragment extends QcBaseShowLifeFragement {
 
     @Override
     protected void needUIBinding() {
-        QcLog.e("needUIBinding == ");
         viewBinding = (FragmentCryptoSummaryBinding) getViewBinding();
         viewBinding.qcRecyclerViewLow.setAdapter(adapter);
         viewBinding.qcRecyclerViewHigh.setAdapter(adapter);
@@ -105,7 +103,6 @@ public class CryptoSummaryFragment extends QcBaseShowLifeFragement {
         viewModel.getSummary().observe(this, new Observer<CryptowatSummary>() {
             @Override
             public void onChanged(@Nullable CryptowatSummary cryptowatSummary_) {
-                QcLog.e("observe getSummary == " + cryptowatSummary_.toString());
                 cryptowatSummary = cryptowatSummary_;
 
                 if (cryptowatSummary != null && cryptowatSummary.getResult() != null) {
